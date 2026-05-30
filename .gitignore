@@ -4,3 +4,5 @@ snapshot.json
 reports/
 .venv/
 .DS_Store
+radar-launchd.log
+radar-cron.log

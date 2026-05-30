@@ -44,13 +44,29 @@ python3 radar.py
 
 GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。
 
-## 定时(可选)
+## 定时(每天自动跑)
 
-挂 cron,例如每天 9 点跑一次:
+工具本身跨平台(`python3 radar.py` 哪都能跑),但"每天 8:30 自动触发"是操作系统的活,分系统配置。
+统一入口是 `scripts/run-radar.sh`(它会自动处理 token:优先用 `GITHUB_TOKEN`,没有再尝试 `gh`)。
 
-```cron
-0 9 * * * cd /Users/jenson/github-radar && GITHUB_TOKEN=$(gh auth token) /usr/bin/python3 radar.py
+**macOS(launchd,推荐)** —— 比 cron 可靠:到点时若在睡眠,唤醒后会补跑。
+
+```bash
+cp scripts/com.jenson.github-radar.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jenson.github-radar.plist
+launchctl enable gui/$(id -u)/com.jenson.github-radar
+# 卸载:launchctl bootout gui/$(id -u)/com.jenson.github-radar
+# 立即测试一次:launchctl kickstart -k gui/$(id -u)/com.jenson.github-radar
 ```
+日志看 `radar-launchd.log`。换电脑/换路径时,改 plist 里的绝对路径即可。
+
+**Linux(cron):**
+```cron
+30 8 * * * /path/to/github-radar/scripts/run-radar.sh >> /path/to/github-radar/radar-cron.log 2>&1
+```
+
+**Windows(任务计划程序):** 新建任务,每天 08:30,操作设为运行
+`python C:\path\to\github-radar\radar.py`,并在环境变量里设好 `GITHUB_TOKEN`(或先 `gh auth login`)。
 
 ## 测试
 

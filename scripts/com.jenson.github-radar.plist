@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>Label</key>
+  <string>com.jenson.github-radar</string>
+
+  <!-- 用登录 shell(-l)以加载 PATH,确保能找到 python3 / gh -->
+  <key>ProgramArguments</key>
+  <array>
+    <string>/bin/zsh</string>
+    <string>-lc</string>
+    <string>/Users/jenson/github-radar/scripts/run-radar.sh</string>
+  </array>
+
+  <!-- 每天 8:30。launchd 特性:若到点时 Mac 在睡眠,唤醒后会补跑一次 -->
+  <key>StartCalendarInterval</key>
+  <dict>
+    <key>Hour</key><integer>8</integer>
+    <key>Minute</key><integer>30</integer>
+  </dict>
+
+  <key>RunAtLoad</key>
+  <false/>
+
+  <key>StandardOutPath</key>
+  <string>/Users/jenson/github-radar/radar-launchd.log</string>
+  <key>StandardErrorPath</key>
+  <string>/Users/jenson/github-radar/radar-launchd.log</string>
+</dict>
+</plist>
