@@ -15,7 +15,11 @@ def collect_repos(client, keywords, min_stars, cap):
     for kw in keywords:
         try:
             for r in client.search_repos(kw, min_stars, cap):
-                seen[r["full_name"]] = r
+                # 关键词重叠时同一仓库会出现多次;保留 star 更高的那份,
+                # 使去重结果不依赖关键词的遍历顺序。
+                cur = seen.get(r["full_name"])
+                if cur is None or r["stars"] > cur["stars"]:
+                    seen[r["full_name"]] = r
         except Exception as ex:
             print(f"⚠️ 关键词 '{kw}' 查询失败,跳过:{ex}", file=sys.stderr)
     return list(seen.values())
@@ -31,10 +35,11 @@ def output_path(cfg, date_str):
 def main():
     cfg = load_config(os.path.join(HERE, "config.yaml"))
     if not cfg["github_token"]:
-        print("⚠️ 未设置 GITHUB_TOKEN,降速运行(限流更严)", file=sys.stderr)
+        print("⚠️ 未设置 GITHUB_TOKEN,未认证搜索限流约 10 次/分钟(设置后约 30 次/分钟)", file=sys.stderr)
     client = GitHubClient(token=cfg["github_token"])
     repos = collect_repos(client, all_keywords(cfg),
                           cfg["pool_min_stars"], cfg["fetch_cap_per_keyword"])
+    # 快照固定存在 radar.py 同目录(项目内),与报告输出目录(vault)无关。
     snap_path = os.path.join(HERE, "snapshot.json")
     prev = load_snapshot(snap_path)
     now = datetime.now(timezone.utc)
