@@ -27,7 +27,7 @@ def test_first_run_marks_estimated_and_uses_proxy():
     for e in r["combined"]:
         assert e["is_estimated"] is True
         assert e["delta"] is None
-        assert e["velocity_value"] > 0  # stars / age_days
+        assert e["velocity_per_day"] > 0  # stars / age_days
 
 def test_velocity_uses_real_delta_when_history():
     repos = [_repo("a/b", 150), _repo("c/d", 205)]
@@ -68,3 +68,16 @@ def test_combined_weighting_orders_results():
             "repos": {"big/x": 99990, "rocket/y": 100}}  # +10 vs +400
     r = build_rankings(repos, prev, CFG, now=NOW)
     assert r["combined"][0]["full_name"] == "rocket/y"
+
+def test_empty_repos_returns_empty_rankings():
+    r = build_rankings([], None, CFG, now=NOW)
+    assert r == {"first_run": True, "pool_size": 0,
+                 "combined": [], "landmark": [], "burst": []}
+
+def test_rankings_respect_top_k():
+    cfg = {"top_k": 3, "burst_min_delta": 20, "weights": {"stock": 0.4, "velocity": 0.6}}
+    repos = [_repo(f"o/r{i}", stars=i) for i in range(1, 201)]  # 200 个,5% = 10 > top_k
+    r = build_rankings(repos, {"generated_at": None, "repos": {}}, cfg, now=NOW)
+    assert len(r["combined"]) == 3
+    assert len(r["landmark"]) == 3   # 截断到 top_k,而非 10
+    assert len(r["burst"]) == 3

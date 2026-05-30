@@ -1,6 +1,9 @@
 import math
 from datetime import datetime, timezone
 
+# 标杆榜取候选池存量(star)最高的这个比例。spec 定为前 5%。
+LANDMARK_FRACTION = 0.05
+
 def _parse_iso(s):
     if not s:
         return None
@@ -33,19 +36,20 @@ def build_rankings(repos, prev_snapshot, config, now=None):
         has_prev = (not first_run) and (name in prev_repos)
         if has_prev:
             delta = max(stars - prev_repos[name], 0)
-            velocity_value = delta / elapsed_days
+            velocity_per_day = delta / elapsed_days
             is_estimated = False
         else:
             delta = None
-            velocity_value = stars / _age_days(r.get("created_at"), now)
+            velocity_per_day = stars / _age_days(r.get("created_at"), now)
             is_estimated = True
         e = dict(r)
-        e.update(delta=delta, velocity_value=velocity_value,
-                 velocity_per_day=velocity_value, is_estimated=is_estimated)
+        e.update(delta=delta, velocity_per_day=velocity_per_day, is_estimated=is_estimated)
         enriched.append(e)
 
+    # 增速分:真实增速(delta/elapsed)与代理增速(stars/age)都是"星/天"同量纲,
+    # 故可放进同一次 min-max 归一。代理是该仓库生命周期的平均日增速,真实是近期日增速。
     stock_scores = _minmax([math.log(e["stars"] + 1) for e in enriched])
-    velocity_scores = _minmax([e["velocity_value"] for e in enriched])
+    velocity_scores = _minmax([e["velocity_per_day"] for e in enriched])
     w = config["weights"]
     for e, ss, vs in zip(enriched, stock_scores, velocity_scores):
         e["stock_score"] = ss
@@ -56,7 +60,7 @@ def build_rankings(repos, prev_snapshot, config, now=None):
     combined = sorted(enriched, key=lambda e: e["combined_score"], reverse=True)[:top_k]
 
     by_stars = sorted(enriched, key=lambda e: e["stars"], reverse=True)
-    cutoff = max(1, math.ceil(len(by_stars) * 0.05))
+    cutoff = max(1, math.ceil(len(by_stars) * LANDMARK_FRACTION))
     landmark = by_stars[:cutoff][:top_k]
 
     burst_min = config["burst_min_delta"]
@@ -64,7 +68,7 @@ def build_rankings(repos, prev_snapshot, config, now=None):
         e for e in enriched
         if e["is_estimated"] or (e["delta"] is not None and e["delta"] >= burst_min)
     ]
-    burst = sorted(burst_candidates, key=lambda e: e["velocity_value"], reverse=True)[:top_k]
+    burst = sorted(burst_candidates, key=lambda e: e["velocity_per_day"], reverse=True)[:top_k]
 
     return {"first_run": first_run, "pool_size": len(enriched),
             "combined": combined, "landmark": landmark, "burst": burst}
