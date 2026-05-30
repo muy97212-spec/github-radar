@@ -3,17 +3,17 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.jenson.github-radar</string>
+  <string>com.github-radar</string>
 
-  <!-- 用登录 shell(-l)以加载 PATH,确保能找到 python3 / gh -->
+  <!-- 把 /path/to/github-radar 改成你本机的项目绝对路径。用登录 shell(-l)以加载 PATH。 -->
   <key>ProgramArguments</key>
   <array>
     <string>/bin/zsh</string>
     <string>-lc</string>
-    <string>/Users/jenson/github-radar/scripts/run-radar.sh</string>
+    <string>/path/to/github-radar/scripts/run-radar.sh</string>
   </array>
 
-  <!-- 每天 8:30。launchd 特性:若到点时 Mac 在睡眠,唤醒后会补跑一次 -->
+  <!-- 每天 8:30。launchd 特性:若到点时电脑在睡眠,唤醒后会补跑一次 -->
   <key>StartCalendarInterval</key>
   <dict>
     <key>Hour</key><integer>8</integer>
@@ -24,8 +24,8 @@
   <false/>
 
   <key>StandardOutPath</key>
-  <string>/Users/jenson/github-radar/radar-launchd.log</string>
+  <string>/path/to/github-radar/radar-launchd.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/jenson/github-radar/radar-launchd.log</string>
+  <string>/path/to/github-radar/radar-launchd.log</string>
 </dict>
 </plist>

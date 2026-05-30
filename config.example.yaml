@@ -1,0 +1,13 @@
+# 复制本文件为 config.yaml 后按需修改:cp config.example.yaml config.yaml
+domains:
+  自动化与工作流: [workflow automation, RPA, browser automation, playwright, n8n, scraping]
+  内容创作与分发: [content automation, social media automation, video generation,
+                  auto upload, multi-platform publish, AIGC content]
+pool_min_stars: 50          # 候选池低门槛,放低以让"小而快"的黑马也进池
+fetch_cap_per_keyword: 300  # 每个关键词最多取多少(3 页 × 100)
+top_k: 15                   # 每个榜显示几条
+burst_min_delta: 20         # 爆发榜:本次涨幅至少 +N 星才入榜
+weights: { stock: 0.4, velocity: 0.6 }   # 综合榜:存量 vs 增速 的权重
+# 改成你的 Obsidian vault 绝对路径;若该路径不存在,报告会自动落到项目内 reports/
+vault_path: "/path/to/your/Obsidian Vault"
+report_folder: "GitHub雷达"

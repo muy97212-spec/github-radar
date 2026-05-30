@@ -6,3 +6,4 @@ reports/
 .DS_Store
 radar-launchd.log
 radar-cron.log
+config.yaml

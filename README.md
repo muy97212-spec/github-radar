@@ -11,13 +11,20 @@ Markdown 报告,写入你的 Obsidian vault。
 ## 用法
 
 ```bash
-pip install -r requirements.txt
-export GITHUB_TOKEN="$(gh auth token)"   # 提升搜索限流额度(未认证约 10 次/分钟)
-python3 radar.py
+# 1) 依赖(建议用 venv 隔离)
+python3 -m venv .venv && .venv/bin/pip install -r requirements.txt
+
+# 2) 复制配置并改成你的 Obsidian vault 路径
+cp config.example.yaml config.yaml
+#   编辑 config.yaml 里的 vault_path(不改也能跑,会落到项目内 reports/)
+
+# 3) 跑(GITHUB_TOKEN 提升搜索限流额度,未认证约 10 次/分钟)
+export GITHUB_TOKEN="$(gh auth token)"
+.venv/bin/python radar.py
 ```
 
-报告输出到 `config.yaml` 里 `vault_path` / `report_folder` 指定的目录(默认你的 Obsidian vault
-`GitHub雷达/<日期>.md`)。Obsidian 会自动收录,在那个文件夹开个窗口即可按时间线翻阅。
+报告输出到 `config.yaml` 里 `vault_path` / `report_folder` 指定的目录(指向你的 Obsidian vault,
+得到 `GitHub雷达/<日期>.md`)。Obsidian 会自动收录,在那个文件夹开个窗口即可按时间线翻阅。
 
 **首次运行**没有历史快照,增速为"年龄均速"估算(报告顶部会标注「首跑 · 增速为估算」);
 之后每跑一次都会存一份 `snapshot.json`,下次即按两次之间的**真实涨幅**计算增速。
@@ -30,7 +37,7 @@ python3 radar.py
 
 存量与增速是**两个独立排名**:前 5% 只决定标杆榜谁能上,完全不淘汰爆发榜里的黑马。
 
-## 配置(`config.yaml`)
+## 配置(`config.yaml`,从 `config.example.yaml` 复制而来)
 
 | 字段 | 含义 |
 |------|------|
@@ -51,14 +58,16 @@ GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。
 
 **macOS(launchd,推荐)** —— 比 cron 可靠:到点时若在睡眠,唤醒后会补跑。
 
+先编辑 `scripts/com.github-radar.plist`,把里面的 `/path/to/github-radar` 换成你的项目绝对路径,然后:
+
 ```bash
-cp scripts/com.jenson.github-radar.plist ~/Library/LaunchAgents/
-launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.jenson.github-radar.plist
-launchctl enable gui/$(id -u)/com.jenson.github-radar
-# 卸载:launchctl bootout gui/$(id -u)/com.jenson.github-radar
-# 立即测试一次:launchctl kickstart -k gui/$(id -u)/com.jenson.github-radar
+cp scripts/com.github-radar.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.github-radar.plist
+launchctl enable gui/$(id -u)/com.github-radar
+# 卸载:launchctl bootout gui/$(id -u)/com.github-radar
+# 立即测试一次:launchctl kickstart -k gui/$(id -u)/com.github-radar
 ```
-日志看 `radar-launchd.log`。换电脑/换路径时,改 plist 里的绝对路径即可。
+日志看 `radar-launchd.log`。
 
 **Linux(cron):**
 ```cron
