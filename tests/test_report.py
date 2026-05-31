@@ -89,3 +89,29 @@ def test_render_scope_escapes_untrusted():
     r["combined"][0]["description"] = "x <script> & y"
     h = render_html(r, "2026-05-30", ["A"], theme="scope")
     assert "&lt;script&gt;" in h and "<script>" not in h.split("</head>")[1]
+
+
+def _theme_smoke(theme):
+    h = render_html(_rankings(False), "2026-05-30", ["板块"], theme=theme)
+    assert h.lstrip().startswith("<!DOCTYPE html>")
+    assert f"<!-- theme: {theme} -->" in h
+    assert "https://github.com/a/b" in h
+    assert "综合榜" in h and "标杆榜" in h and "爆发榜" in h
+    assert "+100" in h
+    assert "prefers-reduced-motion" in h
+    r = _rankings(False)
+    r["combined"][0]["description"] = "x <script> & y"
+    h2 = render_html(r, "2026-05-30", ["A"], theme=theme)
+    assert "&lt;script&gt;" in h2 and "<script>" not in h2.split("</head>")[1]
+
+
+def test_render_console_theme_smoke():
+    _theme_smoke("console")
+
+
+def test_render_terminal_theme_smoke():
+    _theme_smoke("terminal")
+
+
+def test_render_homelab_theme_smoke():
+    _theme_smoke("homelab")

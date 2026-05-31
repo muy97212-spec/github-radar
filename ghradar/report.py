@@ -48,22 +48,19 @@ def render_markdown(rankings, date_str, domains):
 
 
 # ============================================================
-# 网页版报告(编辑部「晨报」风) —— 由真实 rankings 数据生成,
-# 行内容在服务端烘焙,不含 <script>;所有外部文本均 HTML 转义。
+# 网页版报告 —— 单一「编辑部大报」排版(masthead → 导语 → 异动条 →
+# 三榜 → 版尾),由真实 rankings 服务端烘焙;不含 <script>,外部文本全转义。
+# 每个板块用同一套排版,只换「字体 + 配色 + 底纹」(见 _THEMES)。
 # ============================================================
 
-_EDITORIAL_CSS = r"""
-:root{
-  --paper:#f4eee2;--paper-2:#efe7d8;--ink:#211c15;--ink-soft:#4a4136;
-  --muted:#857862;--rule:#d8ccb6;--rule-dark:#b6a888;--red:#c0341d;--red-deep:#8f2414;
-  --display:"Fraunces","Songti SC","STSong",serif;
-  --body:"Spectral","Songti SC","PingFang SC",serif;
-  --mono:"IBM Plex Mono",ui-monospace,monospace;
-}
+# 排版基底:所有视觉值走 CSS 变量,主题只改 :root。各主题须定义:
+# --paper --ink --ink-soft --muted --rule --rule-dark --red --red-deep
+# --display --body --mono --texture --texture-size
+_BASE_CSS = r"""
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth}
 body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.6;
-  -webkit-font-smoothing:antialiased;background-image:radial-gradient(rgba(120,90,40,.035) 1px,transparent 1px);background-size:3px 3px;}
+  -webkit-font-smoothing:antialiased;background-image:var(--texture,none);background-size:var(--texture-size,auto)}
 .mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
 .wrap{max-width:880px;margin:0 auto;padding:0 34px 70px}
 .masthead{padding-top:42px}
@@ -97,7 +94,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .entry{display:grid;grid-template-columns:34px 1fr auto;gap:18px;align-items:baseline;padding:15px 2px;
   border-bottom:1px solid var(--rule);opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
 @keyframes rise{to{opacity:1;transform:none}}
-.entry:hover{background:linear-gradient(90deg,rgba(192,52,29,.05),transparent 70%)}
+.entry:hover{background:linear-gradient(90deg,color-mix(in srgb,var(--red) 8%,transparent),transparent 70%)}
 .rk{font-family:var(--display);font-style:italic;font-size:22px;color:var(--rule-dark);text-align:right;font-weight:600}
 .entry:nth-child(-n+4) .rk{color:var(--red)}
 .e-main{min-width:0}
@@ -138,10 +135,78 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 }
 """
 
-_FONT_LINK = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900'
-    '&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">')
+
+def _fonts(families):
+    return ('<link rel="preconnect" href="https://fonts.googleapis.com">'
+            '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
+            f'<link href="https://fonts.googleapis.com/css2?{families}&display=swap" rel="stylesheet">')
+
+
+# 五套主题:同一排版,只换字体 / 配色 / 底纹。kicker = 报头左上角的小标。
+_THEMES = {
+    "editorial": {
+        "kicker": "晨报 · Daily Dispatch",
+        "fonts": _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
+                        "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
+        "root": ":root{"
+                "--paper:#f4eee2;--ink:#211c15;--ink-soft:#4a4136;--muted:#857862;"
+                "--rule:#d8ccb6;--rule-dark:#b6a888;--red:#c0341d;--red-deep:#8f2414;"
+                '--display:"Fraunces","Songti SC","STSong",serif;'
+                '--body:"Spectral","Songti SC","PingFang SC",serif;'
+                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
+                "--texture:radial-gradient(rgba(120,90,40,.035) 1px,transparent 1px);--texture-size:3px 3px}",
+    },
+    "scope": {
+        "kicker": "雷达简报 · Radar Dispatch",
+        "fonts": _fonts("family=Chakra+Petch:wght@400;500;600;700"
+                        "&family=IBM+Plex+Mono:wght@400;500;600"),
+        "root": ":root{"
+                "--paper:#070b10;--ink:#d7e2ec;--ink-soft:#9fb2c2;--muted:#6c7f91;"
+                "--rule:#1b2733;--rule-dark:#33485c;--red:#c2f24e;--red-deep:#a6d62f;"
+                '--display:"Chakra Petch","PingFang SC",sans-serif;'
+                '--body:"IBM Plex Mono","PingFang SC",ui-monospace,monospace;'
+                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
+                "--texture:repeating-linear-gradient(0deg,rgba(120,200,130,.05) 0 1px,transparent 1px 64px),"
+                "repeating-linear-gradient(90deg,rgba(120,200,130,.05) 0 1px,transparent 1px 64px);"
+                "--texture-size:auto}",
+    },
+    "console": {
+        "kicker": "推理台 · Inference Console",
+        "fonts": _fonts("family=Orbitron:wght@500;700;900"
+                        "&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
+        "root": ":root{"
+                "--paper:#0a0e14;--ink:#e6edf3;--ink-soft:#9aa7b5;--muted:#5f6e7e;"
+                "--rule:#19222e;--rule-dark:#2b3a4c;--red:#22d3ee;--red-deep:#38bdf8;"
+                '--display:"Orbitron","PingFang SC",sans-serif;'
+                '--body:"IBM Plex Sans","PingFang SC",sans-serif;'
+                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
+                "--texture:radial-gradient(rgba(56,189,248,.05) 1px,transparent 1px);--texture-size:22px 22px}",
+    },
+    "terminal": {
+        "kicker": "终端会话 · TTY Session",
+        "fonts": _fonts("family=JetBrains+Mono:wght@400;500;700;800"),
+        "root": ":root{"
+                "--paper:#0a0a0a;--ink:#d6e6d6;--ink-soft:#8aa88a;--muted:#5d6f5d;"
+                "--rule:#1f2a1f;--rule-dark:#34472f;--red:#9ef01a;--red-deep:#f2b705;"
+                '--display:"JetBrains Mono","PingFang SC",monospace;'
+                '--body:"JetBrains Mono","PingFang SC",monospace;'
+                '--mono:"JetBrains Mono",ui-monospace,monospace;'
+                "--texture:repeating-linear-gradient(0deg,rgba(158,240,26,.04) 0 1px,transparent 1px 3px);"
+                "--texture-size:auto}",
+    },
+    "homelab": {
+        "kicker": "面板 · Homelab Panel",
+        "fonts": _fonts("family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800"
+                        "&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
+        "root": ":root{"
+                "--paper:#f5f7f8;--ink:#19302e;--ink-soft:#42595a;--muted:#7b9293;"
+                "--rule:#dde7e6;--rule-dark:#b6cbc9;--red:#0d9488;--red-deep:#0f766e;"
+                '--display:"Bricolage Grotesque","PingFang SC",sans-serif;'
+                '--body:"Hanken Grotesk","PingFang SC",sans-serif;'
+                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
+                "--texture:radial-gradient(rgba(13,148,136,.05) 1px,transparent 1px);--texture-size:20px 20px}",
+    },
+}
 
 _HTML_BOARDS_META = [
     ("综合榜", "Combined", "存量 × 增速 · 黑马优先", "combined"),
@@ -237,7 +302,10 @@ def _date_cn(date_str):
         return _esc(date_str)
 
 
-def _render_editorial(rankings, date_str, domains):
+def render_html(rankings, date_str, domains, theme="editorial"):
+    """统一排版,按 theme 换字体/配色/底纹。未知主题回退 editorial。"""
+    t = _THEMES.get(theme) or _THEMES["editorial"]
+    theme_key = theme if theme in _THEMES else "editorial"
     domain_str = _esc(" / ".join(domains))
     pool = rankings["pool_size"]
     first_run = rankings["first_run"]
@@ -261,11 +329,12 @@ def _render_editorial(rankings, date_str, domains):
     return (
         '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n'
         '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        f"<title>GitHub 雷达 · 晨报 · {_esc(date_str)}</title>\n"
-        + _FONT_LINK + "\n<style>" + _EDITORIAL_CSS + "</style>\n</head>\n<body>\n"
+        f"<title>GitHub 雷达 · {domain_str} · {_esc(date_str)}</title>\n"
+        + t["fonts"] + "\n<style>" + t["root"] + _BASE_CSS + "</style>\n</head>\n<body>\n"
+        f"<!-- theme: {theme_key} -->\n"
         '<div class="wrap">\n'
         '<div class="masthead"><hr class="rule-thin">'
-        '<div class="dateline"><span>晨报 · Daily Dispatch</span>'
+        f'<div class="dateline"><span>{_esc(t["kicker"])}</span>'
         f"<span>候选池 {pool:,}</span><span>{_date_cn(date_str)}</span></div>"
         '<hr class="rule-thick">'
         f'<div class="wordmark"><h1>GitHub 雷达</h1><div class="sub">高星 × 高增速 · {domain_str}{note}</div></div>'
@@ -280,221 +349,3 @@ def _render_editorial(rankings, date_str, domains):
         f'<div class="foot">GH·RADAR — Search API + 本地快照 · 每日 08:30 自动刊印 · 数据快照 {_esc(date_str)}</div>'
         '</div>\n</div>\n</body>\n</html>\n'
     )
-
-
-# ============================================================
-# 主题:scope —— 示波器 / 雷达蓝图(深色,磷光绿)。复用共享结构类
-# (.section/.entry/.e-name…),只换皮肤;自带 chrome + 环境层。
-# ============================================================
-
-_SCOPE_FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com">'
-    '<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
-    '<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700'
-    '&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">')
-
-_SCOPE_CSS = r"""
-:root{
-  --ink:#05070a;--panel:#0c1219;--panel-2:#0f1620;--line:#1b2733;--line-bright:#27384a;
-  --txt:#d7e2ec;--txt-dim:#7d8ea0;--txt-faint:#4d5d6d;--muted:#7d8ea0;
-  --signal:#c2f24e;--signal-dim:#7e9e2f;--gold:#f2c14e;--magenta:#ff5fa2;
-  --grid:rgba(120,200,130,.05);--bc:var(--signal);
-  --display:"Chakra Petch","PingFang SC",sans-serif;
-  --mono:"IBM Plex Mono",ui-monospace,"SF Mono",monospace;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{background:var(--ink);color:var(--txt);line-height:1.5;-webkit-font-smoothing:antialiased;
-  overflow-x:hidden;position:relative;
-  font-family:"PingFang SC","Hiragino Sans GB",var(--mono);}
-.mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
-.display{font-family:var(--display)}
-.layer{position:fixed;inset:0;pointer-events:none;z-index:0}
-.grid-bg{background:
-  radial-gradient(circle at 78% 14%,rgba(194,242,78,.07),transparent 38%),
-  repeating-linear-gradient(0deg,var(--grid) 0 1px,transparent 1px 64px),
-  repeating-linear-gradient(90deg,var(--grid) 0 1px,transparent 1px 64px),
-  radial-gradient(circle at 50% -10%,#0b141c 0%,var(--ink) 60%);}
-.rings{top:-44vmax;right:-30vmax;width:96vmax;height:96vmax;border-radius:50%;opacity:.5;
-  background:repeating-radial-gradient(circle,transparent 0 calc(8vmax - 1px),rgba(120,200,130,.10) 8vmax calc(8vmax + 1px));
-  -webkit-mask-image:radial-gradient(circle,#000 60%,transparent 72%);mask-image:radial-gradient(circle,#000 60%,transparent 72%)}
-.sweep{top:-44vmax;right:-30vmax;width:96vmax;height:96vmax;border-radius:50%;opacity:.55;
-  background:conic-gradient(from 0deg,rgba(194,242,78,.20),rgba(194,242,78,0) 32%,transparent 100%);
-  -webkit-mask-image:radial-gradient(circle,#000 60%,transparent 72%);mask-image:radial-gradient(circle,#000 60%,transparent 72%);
-  animation:sweep 9s linear infinite}
-@keyframes sweep{to{transform:rotate(360deg)}}
-.scan{background:repeating-linear-gradient(0deg,rgba(0,0,0,.16) 0 1px,transparent 1px 3px);mix-blend-mode:multiply;opacity:.5;z-index:2}
-.wrap{position:relative;z-index:5;max-width:1080px;margin:0 auto;padding:0 28px}
-.topbar{position:sticky;top:0;z-index:20;backdrop-filter:blur(10px);background:rgba(5,7,10,.72);border-bottom:1px solid var(--line)}
-.topbar .row{display:flex;align-items:center;gap:18px;max-width:1080px;margin:0 auto;padding:13px 28px}
-.brand{display:flex;align-items:baseline;gap:9px;font-weight:700;letter-spacing:.16em;font-size:14px}
-.brand .lime{color:var(--signal)}
-.live{display:flex;align-items:center;gap:7px;font-size:11px;letter-spacing:.18em;color:var(--txt-dim)}
-.live .dot{width:7px;height:7px;border-radius:50%;background:var(--signal);animation:ping 1.8s ease-out infinite}
-@keyframes ping{0%{box-shadow:0 0 0 0 rgba(194,242,78,.55)}70%{box-shadow:0 0 0 8px rgba(194,242,78,0)}100%{box-shadow:0 0 0 0 rgba(194,242,78,0)}}
-.topbar .spacer{flex:1}
-.topbar .meta{font-size:11.5px;color:var(--txt-dim);letter-spacing:.06em}
-.topbar .meta b{color:var(--signal);font-weight:600}
-.hero{padding:60px 0 40px;border-bottom:1px solid var(--line)}
-.eyebrow{font-size:12px;letter-spacing:.42em;color:var(--signal-dim);margin-bottom:18px}
-.hero h1{font-family:var(--display);font-weight:700;font-size:clamp(40px,7vw,76px);line-height:.98;letter-spacing:-.01em;text-transform:uppercase}
-.hero h1 em{font-style:normal;color:var(--signal)}
-.hero h1 .cn{display:block;font-size:.4em;letter-spacing:.28em;color:var(--txt);margin-top:14px;text-transform:none;font-weight:500}
-.lead{margin-top:22px;max-width:52ch;color:var(--txt-dim);font-size:14.5px;line-height:1.7}
-.lead b{color:var(--txt);font-weight:500}
-.highs{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:34px;max-width:680px}
-.high{position:relative;border:1px solid var(--line-bright);border-radius:3px;padding:16px 18px;overflow:hidden;
-  background:linear-gradient(180deg,var(--panel-2),var(--panel))}
-.high::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--c,var(--signal))}
-.high .k{font-size:10.5px;letter-spacing:.22em;color:var(--txt-dim);margin-bottom:9px}
-.high .nm{font-size:14px;font-weight:600;color:var(--txt);word-break:break-all}
-.high .big{font-family:var(--mono);font-size:27px;font-weight:600;color:var(--c,var(--signal));margin-top:6px;letter-spacing:-.02em}
-.high .big .u{font-size:14px;opacity:.6}
-.high .sub{font-size:11px;color:var(--txt-faint);margin-top:3px}
-.legend{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:32px;font-size:11.5px;color:var(--txt-dim)}
-.legend span{display:inline-flex;align-items:center;gap:8px;letter-spacing:.04em}
-.legend i{width:18px;height:3px;border-radius:2px;display:inline-block}
-/* ---- 共享结构类:section / entry … ---- */
-main .section{padding:46px 0 8px}
-main .section:nth-of-type(1){--bc:var(--signal)}
-main .section:nth-of-type(2){--bc:var(--gold)}
-main .section:nth-of-type(3){--bc:var(--magenta)}
-.sec-h{display:flex;align-items:flex-end;gap:14px;border-bottom:1px solid var(--line);padding-bottom:13px;margin-bottom:2px}
-.sec-h h2{font-family:var(--display);font-size:25px;font-weight:600;letter-spacing:.02em;color:var(--txt)}
-.sec-h h2::before{content:"▍";color:var(--bc);margin-right:7px}
-.sec-h .en{order:-1;font-family:var(--mono);font-size:12px;color:var(--bc);letter-spacing:.1em}
-.sec-h .by{margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--txt-faint)}
-.empty{color:var(--txt-faint);font-style:italic;padding:18px 4px}
-.entry{display:grid;grid-template-columns:40px 1fr 172px;gap:18px;align-items:center;padding:16px 8px 16px 4px;
-  border-bottom:1px solid var(--line);opacity:0;transform:translateY(10px);animation:rise .5s cubic-bezier(.2,.7,.3,1) forwards}
-@keyframes rise{to{opacity:1;transform:none}}
-.entry:hover{background:linear-gradient(90deg,rgba(194,242,78,.04),transparent 70%)}
-.entry:hover .e-name{color:var(--bc)}
-.rk{font-family:var(--mono);font-size:18px;color:var(--txt-faint);text-align:right;font-weight:500}
-.entry:nth-child(-n+5) .rk{color:var(--bc)}
-.e-main{min-width:0}
-.e-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.e-name{font-size:15.5px;font-weight:600;color:var(--txt);text-decoration:none;letter-spacing:.01em;transition:color .15s}
-.e-name:hover{text-decoration:underline;text-decoration-color:var(--bc);text-underline-offset:3px}
-.e-lang{font-family:var(--mono);font-size:10.5px;color:var(--txt-dim);border:1px solid var(--line-bright);border-radius:2px;padding:1px 7px;letter-spacing:.04em}
-.e-desc{font-size:12.5px;color:var(--txt-dim);margin-top:5px;line-height:1.55;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
-.e-tags{margin-top:7px;display:flex;flex-wrap:wrap;gap:6px}
-.e-tags span{font-family:var(--mono);font-size:10px;color:var(--txt-faint);border:1px solid var(--line);padding:1px 7px;border-radius:2px;letter-spacing:.02em}
-.e-stat{text-align:right}
-.e-stars{font-family:var(--mono);font-size:13px;color:var(--txt)}
-.e-stars b{color:var(--txt);font-weight:600}
-.e-vel{font-family:var(--mono);font-size:14.5px;color:var(--bc);font-weight:600;margin-top:3px}
-.e-vel.est{color:var(--txt-dim);font-style:italic} .e-vel.flat{color:var(--txt-faint)}
-.e-bar{height:3px;border-radius:2px;background:var(--line);margin-top:8px;overflow:hidden;position:relative}
-.e-bar>i{position:absolute;inset:0 auto 0 0;background:linear-gradient(90deg,var(--bc),transparent);border-radius:2px;transform-origin:left;transform:scaleX(0);animation:fill 1.1s cubic-bezier(.2,.8,.2,1) forwards}
-.e-bar.est>i{background:repeating-linear-gradient(90deg,var(--txt-dim) 0 4px,transparent 4px 8px)}
-@keyframes fill{to{transform:scaleX(var(--w,0))}}
-footer{margin-top:48px;padding:34px 0 60px;border-top:1px solid var(--line);color:var(--txt-faint);font-size:12px;line-height:1.8}
-footer .ft-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;margin-bottom:24px}
-footer h3{font-family:var(--display);font-size:13px;letter-spacing:.06em;color:var(--txt);margin-bottom:7px}
-footer b{color:var(--signal-dim);font-weight:600}
-footer .sig{font-family:var(--mono);letter-spacing:.05em}
-@media (prefers-reduced-motion: reduce){
-  .entry{opacity:1!important;transform:none!important;animation:none!important}
-  .e-bar>i{transform:scaleX(var(--w))!important;animation:none!important}
-  .sweep,.live .dot{animation:none!important}
-}
-@media(max-width:720px){
-  .highs{grid-template-columns:1fr}
-  .entry{grid-template-columns:28px 1fr;gap:12px}
-  .e-stat{grid-column:2;text-align:left;display:flex;gap:16px;align-items:center}
-  .e-bar{display:none}
-  footer .ft-grid{grid-template-columns:1fr}
-}
-"""
-
-
-def _scope_num(e):
-    if e.get("is_estimated"):
-        return f'约 +{e["velocity_per_day"]:.0f}<span class="u"> /天</span>'
-    if e.get("delta") == 0:
-        return "持平"
-    return f'+{e["delta"]}<span class="u"> /天</span>'
-
-
-def _scope_highs(rankings):
-    pool = rankings["burst"] or rankings["combined"] or rankings["landmark"] or []
-    if not pool:
-        return ""
-    headline = max(pool, key=lambda e: e["velocity_per_day"])
-    picks = [("最快信号 · TOP VELOCITY", headline, "var(--magenta)")]
-    smalls = sorted(pool, key=lambda e: e["stars"])[: max(1, len(pool) // 2)]
-    dh = max(smalls, key=lambda e: e["velocity_per_day"])
-    if dh["full_name"] != headline["full_name"]:
-        picks.append(("最强黑马 · DARK HORSE", dh, "var(--signal)"))
-    cards = []
-    for label, e, color in picks:
-        sub = f'★ {e["stars"]:,}' + (f' · {_esc(e["language"])}' if e.get("language") else "")
-        cards.append(
-            f'<div class="high" style="--c:{color}"><div class="k mono">{_esc(label)}</div>'
-            f'<div class="nm">{_esc(e["full_name"])}</div>'
-            f'<div class="big mono">{_scope_num(e)}</div>'
-            f'<div class="sub mono">{sub}</div></div>'
-        )
-    return '<div class="highs">' + "".join(cards) + "</div>"
-
-
-def _render_scope(rankings, date_str, domains):
-    domain_str = _esc(" / ".join(domains))
-    pool = rankings["pool_size"]
-    first_run = rankings["first_run"]
-    note = " · 首跑 · 增速为估算" if first_run else ""
-    lead = (f"在「{domain_str}」领域扫描 <b>{pool:,}</b> 个仓库,按<b>存量</b>与<b>增速</b>"
-            "两个独立维度成像,标出又大又稳的标杆、和小而快的黑马。")
-    lead += ("首跑暂无历史快照,增速以年龄均速估算。" if first_run
-             else "增速为与上一份快照的<b>真实涨幅</b>(按每仓库各自间隔折算日增)。")
-    boards = "".join(
-        _html_section(name, en, by, rankings[key]) for name, en, by, key in _HTML_BOARDS_META
-    )
-    return (
-        '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n'
-        '<meta name="viewport" content="width=device-width, initial-scale=1.0">\n'
-        f"<title>GitHub 雷达 · {domain_str} · {_esc(date_str)}</title>\n"
-        + _SCOPE_FONTS + "\n<style>" + _SCOPE_CSS + "</style>\n</head>\n<body>\n"
-        "<!-- theme: scope -->\n"
-        '<div class="layer grid-bg"></div><div class="layer rings"></div>'
-        '<div class="layer sweep"></div><div class="layer scan"></div>\n'
-        '<div class="topbar"><div class="row">'
-        '<div class="brand display"><span class="lime">◎ 雷达</span><span>GH·RADAR</span></div>'
-        '<div class="live mono"><span class="dot"></span>SCANNING</div>'
-        '<div class="spacer"></div>'
-        f'<div class="meta mono">候选池 <b>{pool:,}</b> · {_esc(date_str)}</div>'
-        "</div></div>\n"
-        '<div class="wrap">\n<section class="hero">'
-        f'<div class="eyebrow mono">DAILY REPO TELEMETRY · {domain_str}{note}</div>'
-        '<h1 class="display">SIGNAL<br><em>DETECTED</em>'
-        f'<span class="cn">高星 × 高增速 · 今日板块 {domain_str}</span></h1>'
-        f'<p class="lead">{lead}</p>'
-        f"{_scope_highs(rankings)}"
-        '<div class="legend mono">'
-        '<span><i style="background:var(--signal)"></i>综合 — 存量×增速</span>'
-        '<span><i style="background:var(--gold)"></i>标杆 — 存量前 5%</span>'
-        '<span><i style="background:var(--magenta)"></i>爆发 — 纯增速</span>'
-        '<span><i style="background:var(--txt-dim)"></i>信号条 = 当日增速强度</span>'
-        "</div></section>\n"
-        f"<main>{boards}</main>\n"
-        '<footer><div class="ft-grid">'
-        '<div><h3>综合榜</h3>归一化加权 <b>0.4 存量 + 0.6 增速</b>,偏向发现黑马。</div>'
-        '<div><h3>标杆榜</h3>候选池里 star 排<b>前 5%</b> —— 大而稳。</div>'
-        '<div><h3>爆发榜</h3>只看<b>增速</b>、不看绝对星数 —— 小而快的黑马。</div>'
-        "</div>"
-        f'<div class="sig">◎ GH·RADAR — Search API + 本地快照 · 每日 08:30 自动扫描 · 数据快照 {_esc(date_str)} · 候选池 {pool:,}</div>'
-        "</footer>\n</div>\n</body>\n</html>\n"
-    )
-
-
-# 主题 → renderer。共用 _html_section/_html_entry/_vel_html/_esc/_date_cn 等数据 helper；
-# 各 renderer 自带 chrome(masthead/lede/footer) + CSS + 字体。后续任务注册其余 4 套。
-_THEME_RENDERERS = {
-    "editorial": _render_editorial,
-    "scope": _render_scope,
-}
-
-
-def render_html(rankings, date_str, domains, theme="editorial"):
-    renderer = _THEME_RENDERERS.get(theme) or _THEME_RENDERERS["editorial"]
-    return renderer(rankings, date_str, domains)
