@@ -146,6 +146,7 @@ def _fonts(families):
 _THEMES = {
     "editorial": {
         "kicker": "晨报 · Daily Dispatch",
+        "accent": "#c0341d",
         "fonts": _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
                         "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
         "root": ":root{"
@@ -158,6 +159,7 @@ _THEMES = {
     },
     "scope": {
         "kicker": "雷达简报 · Radar Dispatch",
+        "accent": "#c2f24e",
         "fonts": _fonts("family=Chakra+Petch:wght@400;500;600;700"
                         "&family=IBM+Plex+Mono:wght@400;500;600"),
         "root": ":root{"
@@ -172,6 +174,7 @@ _THEMES = {
     },
     "console": {
         "kicker": "推理台 · Inference Console",
+        "accent": "#22d3ee",
         "fonts": _fonts("family=Orbitron:wght@500;700;900"
                         "&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
         "root": ":root{"
@@ -184,6 +187,7 @@ _THEMES = {
     },
     "terminal": {
         "kicker": "终端会话 · TTY Session",
+        "accent": "#9ef01a",
         "fonts": _fonts("family=JetBrains+Mono:wght@400;500;700;800"),
         "root": ":root{"
                 "--paper:#0a0a0a;--ink:#d6e6d6;--ink-soft:#8aa88a;--muted:#5d6f5d;"
@@ -196,6 +200,7 @@ _THEMES = {
     },
     "homelab": {
         "kicker": "面板 · Homelab Panel",
+        "accent": "#0d9488",
         "fonts": _fonts("family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800"
                         "&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
         "root": ":root{"
@@ -207,6 +212,11 @@ _THEMES = {
                 "--texture:radial-gradient(rgba(13,148,136,.05) 1px,transparent 1px);--texture-size:20px 20px}",
     },
 }
+
+def theme_accent(theme):
+    """板块强调色,供总览仪表盘给卡片着色;未知主题回退 editorial。"""
+    return (_THEMES.get(theme) or _THEMES["editorial"]).get("accent", "#c0341d")
+
 
 _HTML_BOARDS_META = [
     ("综合榜", "Combined", "存量 × 增速 · 黑马优先", "combined"),

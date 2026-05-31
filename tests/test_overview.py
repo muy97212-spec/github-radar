@@ -34,3 +34,23 @@ def test_dashboard_html_is_full_doc_and_escapes():
     assert "<script>/y" not in h and "&lt;script&gt;" in h   # 转义
     assert "AI/大模型应用与框架" in h
     assert "prefers-reduced-motion" in h                     # 无障碍回退存在
+    assert "<script>" not in h.split("</head>")[1]           # body 内无裸 script
+
+
+def test_dashboard_marks_today_and_next():
+    states = {d: None for d in DOMAINS}
+    h = render_dashboard_html(states, DOMAINS, today=DOMAINS[0],
+                              nxt=DOMAINS[1], today_str="2026-05-31")
+    assert "LIVE" in h or "今日" in h          # 今日板块标记
+    assert "下一班" in h                        # 接下来板块标记
+    assert DOMAINS[0] in h and DOMAINS[1] in h
+    assert "轮值环" in h                        # 5 天轮值环存在
+
+
+def test_dashboard_uses_configured_theme_accent():
+    states = {d: None for d in DOMAINS}
+    # console 主题强调色 = 电青 #22d3ee,应出现在该板块卡片/节点上色里
+    themes = {DOMAINS[0]: "console"}
+    h = render_dashboard_html(states, DOMAINS, today=DOMAINS[0], nxt=DOMAINS[1],
+                              today_str="2026-05-31", themes=themes)
+    assert "#22d3ee" in h
