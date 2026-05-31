@@ -1,13 +1,25 @@
-# 复制本文件为 config.yaml 后按需修改:cp config.example.yaml config.yaml
+# 加板块 = 复制 domains 下一段、改板块名与关键词；themes 缺省走 editorial。
 domains:
   自动化与工作流: [workflow automation, RPA, browser automation, playwright, n8n, scraping]
   内容创作与分发: [content automation, social media automation, video generation,
                   auto upload, multi-platform publish, AIGC content]
-pool_min_stars: 50          # 候选池低门槛,放低以让"小而快"的黑马也进池
-fetch_cap_per_keyword: 300  # 每个关键词最多取多少(3 页 × 100)
-top_k: 15                   # 每个榜显示几条
-burst_min_delta: 20         # 爆发榜:本次涨幅至少 +N 星才入榜
-weights: { stock: 0.4, velocity: 0.6 }   # 综合榜:存量 vs 增速 的权重
-# 改成你的 Obsidian vault 绝对路径;若该路径不存在,报告会自动落到项目内 reports/
+  AI/大模型应用与框架: [LLM application, AI agent framework, RAG, LLM inference,
+                       agentic workflow, prompt engineering]
+  开发者工具 / CLI: [developer tool, CLI tool, terminal, productivity, editor plugin]
+  自托管 / 效率应用: [self-hosted, knowledge management, note taking, kanban, dashboard]
+
+rotation: true            # 每天按日期取模只跑一个板块;false = 跑全部(回退)
+themes:                   # 板块 → 视觉主题(scope/editorial/console/terminal/homelab)
+  自动化与工作流: scope
+  内容创作与分发: editorial
+  AI/大模型应用与框架: console
+  开发者工具 / CLI: terminal
+  自托管 / 效率应用: homelab
+
+pool_min_stars: 50
+fetch_cap_per_keyword: 300
+top_k: 15
+burst_min_velocity: 20    # 爆发榜门槛:日增速(星/天)
+weights: { stock: 0.4, velocity: 0.6 }
 vault_path: "/path/to/your/Obsidian Vault"
 report_folder: "GitHub雷达"

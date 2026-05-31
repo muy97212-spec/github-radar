@@ -5,9 +5,11 @@ DEFAULTS = {
     "pool_min_stars": 50,
     "fetch_cap_per_keyword": 300,
     "top_k": 15,
-    "burst_min_delta": 20,
+    "burst_min_velocity": 20,
     "weights": {"stock": 0.4, "velocity": 0.6},
     "report_folder": "GitHub雷达",
+    "rotation": True,
+    "themes": {},
 }
 
 def load_config(path):
