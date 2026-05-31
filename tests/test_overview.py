@@ -47,6 +47,17 @@ def test_dashboard_marks_today_and_next():
     assert "轮值环" in h                        # 5 天轮值环存在
 
 
+def test_dashboard_links_collected_board_to_its_report():
+    from urllib.parse import quote
+    from ghradar.domains import slugify
+    states = {d: None for d in DOMAINS}
+    states[DOMAINS[0]] = _state(DOMAINS[0], "2026-05-31", "a/b", 10)  # 已采集(mini 卡)
+    h = render_dashboard_html(states, DOMAINS, today=DOMAINS[1],
+                              nxt=DOMAINS[2], today_str="2026-05-31")
+    assert quote(slugify(DOMAINS[0])) + "/_latest.html" in h          # 已采集 → 有跳转
+    assert quote(slugify(DOMAINS[3])) + "/_latest.html" not in h      # 未采集 → 不造失效链接
+
+
 def test_dashboard_uses_configured_theme_accent():
     states = {d: None for d in DOMAINS}
     # console 主题强调色 = 电青 #22d3ee,应出现在该板块卡片/节点上色里

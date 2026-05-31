@@ -4,7 +4,15 @@
 import html as _html
 from datetime import datetime
 
+from urllib.parse import quote as _urlquote
+
 from ghradar.report import theme_accent
+from ghradar.domains import slugify
+
+
+def _board_href(domain):
+    """仪表盘在 vault 根,板块报告在 <slug>/_latest.html,返回相对链接(已转义路径)。"""
+    return _urlquote(slugify(domain)) + "/_latest.html"
 
 
 def _esc(s):
@@ -165,6 +173,14 @@ h1.word .mid{color:var(--signal)}
 .hero .stat .nm a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
 .hero .stat .vel{font-family:var(--mono);font-size:14px;color:var(--accent);margin-top:4px}
 .hero .h-foot{font-family:var(--mono);font-size:10.5px;letter-spacing:.06em;color:var(--muted);margin-top:18px}
+.board-link{color:inherit;text-decoration:none;display:inline-flex;align-items:center;gap:7px}
+.board-link:hover{color:var(--accent)}
+.board-link .arr{font-size:.74em;opacity:.5;transition:opacity .15s}
+.board-link:hover .arr{opacity:1}
+.h-cta{display:inline-block;margin-top:18px;font-family:var(--mono);font-size:11px;letter-spacing:.1em;
+  color:var(--accent);text-decoration:none;border:1px solid color-mix(in srgb,var(--accent) 42%,var(--line));
+  border-radius:999px;padding:7px 16px;transition:background .15s}
+.h-cta:hover{background:color-mix(in srgb,var(--accent) 14%,transparent)}
 
 /* ---- 其余 4 板块(对称网格) ---- */
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:18px auto 0;text-align:left}
@@ -241,12 +257,18 @@ def _hero_card(domain, st, accent, skin, today_str):
             f'<div class="h-foot">上次 {_esc(_rel_days(st.get("date_str"), today_str))}'
             f' · 候选池 {_esc(st.get("pool_size", "—"))}</div>'
         )
+    if st:
+        name_html = (f'<a class="board-link" href="{_board_href(domain)}">'
+                     f'{_esc(domain)} <span class="arr">↗</span></a>')
+        cta = f'<a class="h-cta" href="{_board_href(domain)}">打开本板完整三榜 →</a>'
+    else:
+        name_html, cta = _esc(domain), ""
     return (
         f'<section class="hero" style="--accent:{accent}">'
         '<div class="h-badge"><span class="b-dot"></span>今日刊印 · LIVE</div>'
-        f'<div class="h-name">{_esc(domain)}</div>'
+        f'<div class="h-name">{name_html}</div>'
         f'<div class="h-skin">视觉皮肤 · {_esc(skin)}</div>'
-        f'{inner}</section>'
+        f'{inner}{cta}</section>'
     )
 
 
@@ -266,9 +288,14 @@ def _mini_card(domain, st, accent, skin, is_next, delta, today_str, idx):
             f'<div class="mnm">{_link(c)}</div>'
             f'<div class="c-foot">{_esc(_vel_text(c))} · 池 {_esc(st.get("pool_size", "—"))}</div>'
         )
+    if st:
+        name_html = (f'<a class="board-link" href="{_board_href(domain)}">'
+                     f'{_esc(domain)} <span class="arr">↗</span></a>')
+    else:
+        name_html = _esc(domain)
     return (
         f'<div class="card" style="--accent:{accent};animation-delay:{idx * 0.05:.2f}s">'
-        f'<div class="c-name">{_esc(domain)}</div>'
+        f'<div class="c-name">{name_html}</div>'
         f'<div class="skin">{_esc(skin)}</div>{body}</div>'
     )
 
