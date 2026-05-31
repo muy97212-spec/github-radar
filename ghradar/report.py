@@ -74,14 +74,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .wordmark{text-align:center;padding:14px 0 16px}
 .wordmark h1{font-family:var(--display);font-weight:900;font-size:clamp(46px,9vw,96px);line-height:.92;letter-spacing:-.02em;font-optical-sizing:auto}
 .wordmark .sub{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(15px,2.4vw,20px);color:var(--ink-soft);margin-top:8px;letter-spacing:.02em}
-.top{display:grid;grid-template-columns:1.55fr 1fr;gap:34px;padding:30px 0 8px;align-items:start}
-.lede{font-size:18.5px;line-height:1.66;color:var(--ink-soft)}
+.top{padding:36px 0 8px}
+.lede{font-size:18.5px;line-height:1.72;color:var(--ink-soft);max-width:62ch;margin:0 auto;text-align:justify}
 .lede p:first-letter{font-family:var(--display);font-weight:900;float:left;font-size:74px;line-height:.72;padding:7px 12px 0 0;color:var(--red)}
 .lede b{color:var(--ink);font-weight:600}
-.movers{border-top:3px solid var(--ink);border-bottom:1px solid var(--rule-dark);padding:8px 0}
-.movers .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--muted);padding:6px 0 12px}
-.mover{padding:12px 0;border-top:1px solid var(--rule)}
-.mover:first-of-type{border-top:none}
+.movers{margin-top:38px;border-top:3px solid var(--ink);border-bottom:3px solid var(--ink)}
+.movers .cap{font-family:var(--mono);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--muted);text-align:center;padding:10px 0;border-bottom:1px solid var(--rule)}
+.movers .grid{display:grid;grid-template-columns:1fr 1fr}
+.mover{padding:18px 26px;border-left:1px solid var(--rule)}
+.mover:first-child{border-left:none}
 .mover .lab{font-family:var(--display);font-style:italic;font-size:14px;color:var(--red-deep)}
 .mover .nm{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.25;word-break:break-word;margin:2px 0 4px}
 .mover .num{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--red);letter-spacing:-.02em;line-height:1}
@@ -128,7 +129,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   .e-bar>i{transform:scaleX(var(--w))!important;animation:none!important}
 }
 @media(max-width:720px){
-  .top{grid-template-columns:1fr;gap:24px}
+  .movers .grid{grid-template-columns:1fr}
+  .mover{border-left:none} .mover+.mover{border-top:1px solid var(--rule)}
   .colophon .grid{grid-template-columns:1fr}
   .entry{grid-template-columns:26px 1fr;gap:12px}
   .e-stat{grid-column:2;text-align:left;display:flex;gap:16px;align-items:baseline}
@@ -202,7 +204,7 @@ def _html_movers(rankings):
     pool = rankings["burst"] or rankings["combined"] or rankings["landmark"] or []
     if not pool:
         return '<div class="movers"><div class="cap">今日异动 · Top Movers</div>' \
-               '<div class="mover"><div class="meta">(暂无显著异动)</div></div></div>'
+               '<div class="grid"><div class="mover"><div class="meta">(暂无显著异动)</div></div></div></div>'
     headline = max(pool, key=lambda e: e["velocity_per_day"])
     picks = [("头条 · 最快信号", headline)]
     smalls = sorted(pool, key=lambda e: e["stars"])[: max(1, len(pool) // 2)]
@@ -223,7 +225,8 @@ def _html_movers(rankings):
             f'<div class="nm">{_esc(e["full_name"])}</div>'
             f'<div class="num">{num}</div><div class="meta">{meta}</div></div>'
         )
-    return '<div class="movers"><div class="cap">今日异动 · Top Movers</div>' + "".join(items) + "</div>"
+    return ('<div class="movers"><div class="cap">今日异动 · Top Movers</div>'
+            '<div class="grid">' + "".join(items) + "</div></div>")
 
 
 def _date_cn(date_str):
