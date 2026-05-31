@@ -1,6 +1,7 @@
 __pycache__/
 *.pyc
 snapshot.json
+boards_state/
 reports/
 .venv/
 .DS_Store
