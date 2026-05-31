@@ -72,3 +72,20 @@ def test_render_html_unknown_theme_falls_back_to_editorial():
 def test_render_html_editorial_theme_explicit():
     h = render_html(_rankings(False), "2026-05-30", ["A"], theme="editorial")
     assert "晨报" in h  # 编辑部 chrome 标志
+
+
+def test_render_scope_theme_smoke():
+    h = render_html(_rankings(False), "2026-05-30", ["自动化与工作流"], theme="scope")
+    assert h.lstrip().startswith("<!DOCTYPE html>")
+    assert "<!-- theme: scope -->" in h            # 主题锚点(editorial 没有)
+    assert "https://github.com/a/b" in h
+    assert "综合榜" in h and "标杆榜" in h and "爆发榜" in h
+    assert "+100" in h
+    assert "prefers-reduced-motion" in h
+
+
+def test_render_scope_escapes_untrusted():
+    r = _rankings(False)
+    r["combined"][0]["description"] = "x <script> & y"
+    h = render_html(r, "2026-05-30", ["A"], theme="scope")
+    assert "&lt;script&gt;" in h and "<script>" not in h.split("</head>")[1]
