@@ -27,16 +27,18 @@ def build_rankings(repos, prev_snapshot, config, now=None):
     now = now or datetime.now(timezone.utc)
     prev_repos = (prev_snapshot or {}).get("repos") or {}
     first_run = len(prev_repos) == 0
-    prev_time = _parse_iso((prev_snapshot or {}).get("generated_at"))
-    elapsed_days = max((now - prev_time).total_seconds() / 86400.0, 1.0) if prev_time else 1.0
 
     enriched = []
     for r in repos:
         name, stars = r["full_name"], r["stars"]
-        has_prev = (not first_run) and (name in prev_repos)
-        if has_prev:
-            delta = max(stars - prev_repos[name], 0)
-            velocity_per_day = delta / elapsed_days
+        prev = None if first_run else prev_repos.get(name)
+        if prev is not None:
+            prev_stars = prev["stars"] if isinstance(prev, dict) else prev
+            seen = _parse_iso(prev.get("seen")) if isinstance(prev, dict) else None
+            # 每仓库各自的间隔:轮换下某板块可能 5 天才见一次。
+            elapsed = max((now - seen).total_seconds() / 86400.0, 1.0) if seen else 1.0
+            delta = max(stars - prev_stars, 0)
+            velocity_per_day = delta / elapsed
             is_estimated = False
         else:
             delta = None
@@ -46,8 +48,6 @@ def build_rankings(repos, prev_snapshot, config, now=None):
         e.update(delta=delta, velocity_per_day=velocity_per_day, is_estimated=is_estimated)
         enriched.append(e)
 
-    # 增速分:真实增速(delta/elapsed)与代理增速(stars/age)都是"星/天"同量纲,
-    # 故可放进同一次 min-max 归一。代理是该仓库生命周期的平均日增速,真实是近期日增速。
     stock_scores = _minmax([math.log(e["stars"] + 1) for e in enriched])
     velocity_scores = _minmax([e["velocity_per_day"] for e in enriched])
     w = config["weights"]
@@ -63,10 +63,11 @@ def build_rankings(repos, prev_snapshot, config, now=None):
     cutoff = max(1, math.ceil(len(by_stars) * LANDMARK_FRACTION))
     landmark = by_stars[:cutoff][:top_k]
 
-    burst_min = config["burst_min_delta"]
+    # 爆发榜门槛按"日增速"而非原始增量:轮换下间隔不固定,日增速才同量纲。
+    burst_min_v = config.get("burst_min_velocity", config.get("burst_min_delta", 20))
     burst_candidates = [
         e for e in enriched
-        if e["is_estimated"] or (e["delta"] is not None and e["delta"] >= burst_min)
+        if e["is_estimated"] or e["velocity_per_day"] >= burst_min_v
     ]
     burst = sorted(burst_candidates, key=lambda e: e["velocity_per_day"], reverse=True)[:top_k]
 
