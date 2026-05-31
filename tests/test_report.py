@@ -1,5 +1,5 @@
 # tests/test_report.py
-from ghradar.report import render_markdown
+from ghradar.report import render_markdown, render_html
 
 def _enriched(name, stars, delta, vpd, estimated):
     return {"full_name": name, "html_url": f"https://github.com/{name}",
@@ -34,3 +34,32 @@ def test_empty_section_renders_placeholder():
     r = {"first_run": False, "pool_size": 0, "combined": [], "landmark": [], "burst": []}
     md = render_markdown(r, "2026-05-30", ["A"])
     assert "本期无" in md
+
+
+# ---- render_html (编辑部「晨报」风网页版) ----
+
+def test_html_is_full_document_with_data():
+    h = render_html(_rankings(False), "2026-05-30", ["自动化与工作流"])
+    assert h.lstrip().startswith("<!DOCTYPE html>")
+    assert "GitHub 雷达" in h
+    assert "2026" in h
+    assert "https://github.com/a/b" in h          # 仓库链接
+    assert "综合榜" in h and "标杆榜" in h and "爆发榜" in h
+    assert "+100" in h                             # 真实涨幅
+    assert "1,234" in h                            # 千分位星数
+
+def test_html_escapes_untrusted_text():
+    r = _rankings(False)
+    r["combined"][0]["description"] = "x <script> & y"
+    h = render_html(r, "2026-05-30", ["A"])
+    assert "&lt;script&gt;" in h                   # 转义后
+    assert "<script>" not in h                     # 不出现裸标签
+
+def test_html_first_run_marks_estimated():
+    h = render_html(_rankings(True), "2026-05-30", ["A"])
+    assert ("首跑" in h) or ("估算" in h)
+
+def test_html_empty_boards_does_not_crash():
+    r = {"first_run": False, "pool_size": 0, "combined": [], "landmark": [], "burst": []}
+    h = render_html(r, "2026-05-30", ["A"])
+    assert "<!DOCTYPE html>" in h

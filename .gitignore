@@ -7,3 +7,4 @@ reports/
 radar-launchd.log
 radar-cron.log
 config.yaml
+web/

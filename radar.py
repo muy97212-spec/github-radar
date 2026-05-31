@@ -6,7 +6,7 @@ from ghradar.config import load_config, all_keywords
 from ghradar.github_client import GitHubClient
 from ghradar.snapshot import load_snapshot, save_snapshot
 from ghradar.scoring import build_rankings
-from ghradar.report import render_markdown
+from ghradar.report import render_markdown, render_html
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -45,12 +45,21 @@ def main():
     now = datetime.now(timezone.utc)
     rankings = build_rankings(repos, prev, cfg, now=now)
     date_str = now.strftime("%Y-%m-%d")
-    md = render_markdown(rankings, date_str, list(cfg["domains"].keys()))
+    domains = list(cfg["domains"].keys())
+    md = render_markdown(rankings, date_str, domains)
+    html = render_html(rankings, date_str, domains)
     out = output_path(cfg, date_str)
+    folder = os.path.dirname(out)
     with open(out, "w", encoding="utf-8") as f:
         f.write(md)
+    # 网页版:带日期一份(归档)+ _latest.html 固定一份(供浏览器书签,永远是今天)
+    html_path = os.path.join(folder, f"{date_str}.html")
+    latest_path = os.path.join(folder, "_latest.html")
+    for p in (html_path, latest_path):
+        with open(p, "w", encoding="utf-8") as f:
+            f.write(html)
     save_snapshot(snap_path, repos, generated_at=now.isoformat())
-    print(f"✅ 报告已写入 {out}(候选池 {rankings['pool_size']} 个)")
+    print(f"✅ 报告已写入 {out} + 网页版 {date_str}.html / _latest.html(候选池 {rankings['pool_size']} 个)")
 
 if __name__ == "__main__":
     main()

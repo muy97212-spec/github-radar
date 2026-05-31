@@ -55,3 +55,23 @@ def test_main_writes_report_to_vault_and_saves_snapshot(tmp_path, monkeypatch):
     assert len(reports) == 1                      # 报告写进了 vault
     assert "a/b" in reports[0].read_text(encoding="utf-8")
     assert (tmp_path / "snapshot.json").exists()  # 快照在写报告之后落盘
+
+
+def test_main_also_writes_html_report(tmp_path, monkeypatch):
+    vault = tmp_path / "vault"
+    vault.mkdir()
+    cfg = {"github_token": None, "pool_min_stars": 50, "fetch_cap_per_keyword": 10,
+           "domains": {"自动化": ["k"]}, "weights": {"stock": 0.4, "velocity": 0.6},
+           "top_k": 5, "burst_min_delta": 20,
+           "vault_path": str(vault), "report_folder": "GitHub雷达"}
+    monkeypatch.setattr(radar, "HERE", str(tmp_path))
+    monkeypatch.setattr(radar, "load_config", lambda path: cfg)
+    monkeypatch.setattr(radar, "GitHubClient", lambda token=None: FakeClient([_repo("a/b", 100)]))
+    radar.main()
+    folder = vault / "GitHub雷达"
+    names = {p.name for p in folder.glob("*.html")}
+    assert "_latest.html" in names                                   # 固定书签
+    assert any(n != "_latest.html" for n in names)                   # 还有带日期那份
+    latest = (folder / "_latest.html").read_text(encoding="utf-8")
+    assert latest.lstrip().startswith("<!DOCTYPE html>")
+    assert "a/b" in latest
