@@ -78,7 +78,8 @@ def main():
                render_overview_md(states, domains, today, date_str))
         _write(os.path.join(base, "_仪表盘.html"),
                render_dashboard_html(states, domains, today, nxt, date_str,
-                                     themes=cfg.get("themes")))
+                                     themes=cfg.get("themes"),
+                                     palette=cfg.get("dashboard_palette", "slate")))
         print(f"✅ 「{today}」板块报告 → {folder} · 总览已更新(候选池 {rankings['pool_size']})")
     else:
         repos = collect_repos(client, all_keywords(cfg),

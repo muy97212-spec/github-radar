@@ -16,6 +16,8 @@ themes:                   # 板块 → 视觉主题(scope/editorial/console/term
   开发者工具 / CLI: terminal
   自托管 / 效率应用: homelab
 
+dashboard_palette: slate  # 总览仪表盘 chrome 配色: slate(石板青) / midnight(午夜靛金) / phosphor(碳黑磷光)
+
 pool_min_stars: 50
 fetch_cap_per_keyword: 300
 top_k: 15
