@@ -237,7 +237,7 @@ def _date_cn(date_str):
         return _esc(date_str)
 
 
-def render_html(rankings, date_str, domains):
+def _render_editorial(rankings, date_str, domains):
     domain_str = _esc(" / ".join(domains))
     pool = rankings["pool_size"]
     first_run = rankings["first_run"]
@@ -280,3 +280,15 @@ def render_html(rankings, date_str, domains):
         f'<div class="foot">GH·RADAR — Search API + 本地快照 · 每日 08:30 自动刊印 · 数据快照 {_esc(date_str)}</div>'
         '</div>\n</div>\n</body>\n</html>\n'
     )
+
+
+# 主题 → renderer。共用 _html_section/_html_entry/_vel_html/_esc/_date_cn 等数据 helper；
+# 各 renderer 自带 chrome(masthead/lede/footer) + CSS + 字体。后续任务注册其余 4 套。
+_THEME_RENDERERS = {
+    "editorial": _render_editorial,
+}
+
+
+def render_html(rankings, date_str, domains, theme="editorial"):
+    renderer = _THEME_RENDERERS.get(theme) or _THEME_RENDERERS["editorial"]
+    return renderer(rankings, date_str, domains)

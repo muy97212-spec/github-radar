@@ -63,3 +63,12 @@ def test_html_empty_boards_does_not_crash():
     r = {"first_run": False, "pool_size": 0, "combined": [], "landmark": [], "burst": []}
     h = render_html(r, "2026-05-30", ["A"])
     assert "<!DOCTYPE html>" in h
+
+def test_render_html_unknown_theme_falls_back_to_editorial():
+    h = render_html(_rankings(False), "2026-05-30", ["A"], theme="does-not-exist")
+    assert h.lstrip().startswith("<!DOCTYPE html>")
+    assert "综合榜" in h
+
+def test_render_html_editorial_theme_explicit():
+    h = render_html(_rankings(False), "2026-05-30", ["A"], theme="editorial")
+    assert "晨报" in h  # 编辑部 chrome 标志
