@@ -44,7 +44,7 @@ def test_dashboard_marks_today_and_next():
     assert "LIVE" in h or "今日" in h          # 今日板块标记
     assert "下一班" in h                        # 接下来板块标记
     assert DOMAINS[0] in h and DOMAINS[1] in h
-    assert "轮值环" in h                        # 5 天轮值环存在
+    assert "轮值" in h                          # 五日轮值条存在
 
 
 def test_dashboard_links_collected_board_to_its_report():

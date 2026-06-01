@@ -142,74 +142,41 @@ def _fonts(families):
             f'<link href="https://fonts.googleapis.com/css2?{families}&display=swap" rel="stylesheet">')
 
 
-# 五套主题:同一排版,只换字体 / 配色 / 底纹。kicker = 报头左上角的小标。
+# 五套主题:统一「暖象牙白 + 衬线」高级风,共用同一排版与字体,
+# 只换强调色 + 底纹微染。kicker = 报头左上角的小标。
+_IVORY_FONTS = _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
+                      "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500")
+_IVORY_TYPE = ('--display:"Fraunces","Songti SC","STSong",serif;'
+               '--body:"Spectral","Songti SC","PingFang SC",serif;'
+               '--mono:"IBM Plex Mono",ui-monospace,monospace;')
+
+
+def _ivory_theme(kicker, accent, deep, tex):
+    """暖纸底高级风主题:纸/墨/线统一,仅 accent(--red) 与底纹随板块变。"""
+    return {
+        "kicker": kicker,
+        "accent": accent,
+        "fonts": _IVORY_FONTS,
+        "root": (":root{"
+                 "--paper:#f4eee2;--ink:#211c15;--ink-soft:#4a4136;--muted:#857862;"
+                 "--rule:#d8ccb6;--rule-dark:#b6a888;"
+                 f"--red:{accent};--red-deep:{deep};" + _IVORY_TYPE +
+                 f"--texture:radial-gradient({tex} 1px,transparent 1px);--texture-size:3px 3px}}"),
+    }
+
+
 _THEMES = {
-    "editorial": {
-        "kicker": "晨报 · Daily Dispatch",
-        "accent": "#c0341d",
-        "fonts": _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
-                        "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
-        "root": ":root{"
-                "--paper:#f4eee2;--ink:#211c15;--ink-soft:#4a4136;--muted:#857862;"
-                "--rule:#d8ccb6;--rule-dark:#b6a888;--red:#c0341d;--red-deep:#8f2414;"
-                '--display:"Fraunces","Songti SC","STSong",serif;'
-                '--body:"Spectral","Songti SC","PingFang SC",serif;'
-                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(120,90,40,.035) 1px,transparent 1px);--texture-size:3px 3px}",
-    },
-    "scope": {  # 取色自 Google Gemini:冷白底 + 蓝→紫
-        "kicker": "自动化简报 · FLUX DISPATCH",
-        "accent": "#4d6bf5",
-        "fonts": _fonts("family=Plus+Jakarta+Sans:wght@400;500;700;800"
-                        "&family=IBM+Plex+Mono:wght@400;500"),
-        "root": ":root{"
-                "--paper:#fbfbff;--ink:#1c1d24;--ink-soft:#44464f;--muted:#84868f;"
-                "--rule:#e6e7ef;--rule-dark:#c7c9d6;--red:#4d6bf5;--red-deep:#7c4ff7;"
-                '--display:"Plus Jakarta Sans","PingFang SC",sans-serif;'
-                '--body:"Plus Jakarta Sans","PingFang SC",sans-serif;'
-                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(120% 80% at 50% -8%,rgba(77,107,245,.10),"
-                "rgba(138,92,246,.05) 42%,transparent 72%);--texture-size:auto}",
-    },
-    "console": {  # 取色自 OpenAI/ChatGPT:干净米白 + 信号绿
-        "kicker": "智能前线 · FRONTIER BRIEF",
-        "accent": "#10a37f",
-        "fonts": _fonts("family=Hanken+Grotesk:wght@400;500;700;800;900"
-                        "&family=IBM+Plex+Mono:wght@400;500"),
-        "root": ":root{"
-                "--paper:#f7f7f5;--ink:#0d0d0d;--ink-soft:#383838;--muted:#8b8b85;"
-                "--rule:#e6e6e0;--rule-dark:#cdcdc4;--red:#10a37f;--red-deep:#0c8467;"
-                '--display:"Hanken Grotesk","PingFang SC",sans-serif;'
-                '--body:"Hanken Grotesk","PingFang SC",sans-serif;'
-                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(16,163,127,.05) 1px,transparent 1px);--texture-size:22px 22px}",
-    },
-    "terminal": {  # 取色自 Linear:近黑 + 长春花靛
-        "kicker": "开发者前线 · FORGE BRIEF",
-        "accent": "#6e79d6",
-        "fonts": _fonts("family=Sora:wght@400;500;600;700;800"
-                        "&family=JetBrains+Mono:wght@400;500;700"),
-        "root": ":root{"
-                "--paper:#0a0a0f;--ink:#ededf2;--ink-soft:#a3a3b3;--muted:#66667a;"
-                "--rule:#1b1b27;--rule-dark:#34344a;--red:#6e79d6;--red-deep:#8a93e8;"
-                '--display:"Sora","PingFang SC",sans-serif;'
-                '--body:"Sora","PingFang SC",sans-serif;'
-                '--mono:"JetBrains Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(110,121,214,.05) 1px,transparent 1px);--texture-size:24px 24px}",
-    },
-    "homelab": {  # 取色自 Supabase:深炭底 + 翡翠绿
-        "kicker": "自托管简报 · STACK BRIEF",
-        "accent": "#3ecf8e",
-        "fonts": _fonts("family=Outfit:wght@400;500;700;800;900"
-                        "&family=IBM+Plex+Mono:wght@400;500"),
-        "root": ":root{"
-                "--paper:#0d130f;--ink:#e6efe9;--ink-soft:#9fb4a8;--muted:#5f766a;"
-                "--rule:#18241d;--rule-dark:#2c4636;--red:#3ecf8e;--red-deep:#24b277;"
-                '--display:"Outfit","PingFang SC",sans-serif;'
-                '--body:"Outfit","PingFang SC",sans-serif;'
-                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(62,207,142,.05) 1px,transparent 1px);--texture-size:20px 20px}",
-    },
+    # 板块 → (报头小标, 强调色, 深强调色, 底纹微染 rgba)
+    "editorial": _ivory_theme("晨报 · Daily Dispatch",            # 砖红
+                              "#c0341d", "#8f2414", "rgba(120,90,40,.035)"),
+    "console":   _ivory_theme("智能前线 · FRONTIER BRIEF",        # 靛蓝
+                              "#2c5882", "#1e3f60", "rgba(44,88,130,.05)"),
+    "scope":     _ivory_theme("自动化简报 · FLUX DISPATCH",       # 森绿
+                              "#2f6a47", "#204c33", "rgba(47,106,71,.05)"),
+    "terminal":  _ivory_theme("开发者前线 · FORGE BRIEF",         # 赭石
+                              "#a55228", "#7d3c1a", "rgba(165,82,40,.05)"),
+    "homelab":   _ivory_theme("自托管简报 · STACK BRIEF",         # 黄铜
+                              "#8a7327", "#655119", "rgba(138,115,39,.05)"),
 }
 
 def theme_accent(theme):

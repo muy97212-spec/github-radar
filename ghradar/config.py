@@ -10,7 +10,6 @@ DEFAULTS = {
     "report_folder": "GitHub雷达",
     "rotation": True,
     "themes": {},
-    "dashboard_palette": "slate",
 }
 
 def load_config(path):

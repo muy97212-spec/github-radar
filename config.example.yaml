@@ -9,16 +9,14 @@ domains:
   自托管 / 效率应用: [self-hosted, knowledge management, note taking, kanban, dashboard]
 
 rotation: true            # 每天按日期取模只跑一个板块;false = 跑全部(回退)
-themes:                   # 板块 → 视觉皮肤(共用同一套报头排版,取色自知名产品站):
-                          #   editorial=Claude暖纸 / console=OpenAI绿 / scope=Gemini蓝紫
-                          #   / terminal=Linear靛 / homelab=Supabase翠
+themes:                   # 板块 → 视觉皮肤(统一暖象牙白 + 衬线,只换强调色):
+                          #   editorial=砖红 / console=靛蓝 / scope=森绿
+                          #   / terminal=赭石 / homelab=黄铜
   自动化与工作流: scope
   内容创作与分发: editorial
   AI/大模型应用与框架: console
   开发者工具 / CLI: terminal
   自托管 / 效率应用: homelab
-
-dashboard_palette: slate  # 总览仪表盘 chrome 配色: slate(石板青) / midnight(午夜靛金) / phosphor(碳黑磷光)
 
 pool_min_stars: 50
 fetch_cap_per_keyword: 300

@@ -66,7 +66,6 @@ def test_defaults_include_rotation_and_themes(tmp_path):
     assert cfg["rotation"] is True
     assert cfg["themes"] == {}
     assert cfg["burst_min_velocity"] == 20
-    assert cfg["dashboard_palette"] == "slate"
 
 
 def test_user_can_override_rotation_and_themes(tmp_path):

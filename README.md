@@ -33,18 +33,19 @@ export GITHUB_TOKEN="$(gh auth token)"
 
 每个板块除 Markdown 外,还在**同一子文件夹**生成 HTML:`<日期>.html`(归档)与
 `_latest.html`(固定名、永远最新一期,适合存浏览器书签)。5 个板块共用同一套「晨报」
-大报头排版,只换**配色 / 字体 / 底纹**——皮肤取色自几个设计出彩的产品站:
+大报头排版,统一**暖象牙白 + Fraunces 衬线**的高级风,只换**强调色 / 底纹微染**:
 
-| 主题键 | 取色自 | 风格 |
-|--------|--------|------|
-| `editorial` | Claude | 暖象牙白 + 黏土红(衬线大报头) |
-| `console` | OpenAI | 干净米白 + 信号绿 |
-| `scope` | Gemini | 冷白 + 蓝→紫 |
-| `terminal` | Linear | 近黑 + 长春花靛 |
-| `homelab` | Supabase | 深炭 + 翡翠绿 |
+| 主题键 | 强调色 | 对应板块(默认) |
+|--------|--------|----------------|
+| `editorial` | 砖红 | 内容创作与分发 |
+| `console` | 靛蓝 | AI/大模型应用与框架 |
+| `scope` | 森绿 | 自动化与工作流 |
+| `terminal` | 赭石 | 开发者工具 / CLI |
+| `homelab` | 黄铜 | 自托管 / 效率应用 |
 
-vault 根目录另有一张 **`_仪表盘.html`(指挥中心)**:居中对称、雷达报头、5 天轮值环,
-每个板块一张卡片(用该板块的主题色),**点卡片名即跳进对应板块的 `_latest.html`**。
+vault 根目录另有一张 **`_仪表盘.html`(总览封面)**:与板块同一套暖纸编辑部排版,
+居中、易读——大报头 + 今日/下一班导语 + 五日轮值条 + 今日 hero + 其余板块对称卡片
+(各用本板强调色),**点卡片名即跳进对应板块的 `_latest.html`**。
 把这张仪表盘存成书签,就是你每天的入口。
 
 HTML 由 `ghradar/report.py` / `ghradar/overview.py` 在本地生成:行内容服务端烘焙、
@@ -90,7 +91,6 @@ GitHub雷达/
 | `weights` | 综合榜的 `stock` / `velocity` 权重 |
 | `rotation` | `true`(默认)每天轮一个板块;`false` 每天跑全部 |
 | `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab) |
-| `dashboard_palette` | 仪表盘 chrome 配色:`slate` / `midnight` / `phosphor` |
 | `vault_path` / `report_folder` | 报告输出目录(vault 不存在时降级到项目内 `reports/`) |
 
 GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。

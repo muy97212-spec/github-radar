@@ -2,8 +2,8 @@
 """本地预览生成器 —— 用内置样例数据离线重建 web/ 下的样张,便于挑配色/改排版。
 
 不打 GitHub API、不依赖实时快照,纯渲染当前代码的输出:
-  - web/_preview_<theme>.html       5 套板块皮肤(editorial/console/scope/terminal/homelab)
-  - web/_preview_dash_<palette>.html 3 套仪表盘 chrome(slate/midnight/phosphor)
+  - web/_preview_<theme>.html   5 套板块皮肤(editorial/console/scope/terminal/homelab)
+  - web/_preview_dashboard.html 暖纸总览仪表盘
 
 用法:  .venv/bin/python scripts/make_previews.py
 web/ 是 gitignored 的草稿区,删了随时跑这个脚本重建即可。
@@ -80,14 +80,12 @@ def main():
         written.append(path)
 
     states = _sample_states()
-    for palette in ("slate", "midnight", "phosphor"):
-        html = render_dashboard_html(states, DOMAINS, today="AI/大模型应用与框架",
-                                     nxt="开发者工具 / CLI", today_str=DATE,
-                                     themes=THEMES, palette=palette)
-        path = os.path.join(WEB, f"_preview_dash_{palette}.html")
-        with open(path, "w", encoding="utf-8") as f:
-            f.write(html)
-        written.append(path)
+    html = render_dashboard_html(states, DOMAINS, today="AI/大模型应用与框架",
+                                 nxt="开发者工具 / CLI", today_str=DATE, themes=THEMES)
+    path = os.path.join(WEB, "_preview_dashboard.html")
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(html)
+    written.append(path)
 
     for p in written:
         print("✅", os.path.relpath(p))
