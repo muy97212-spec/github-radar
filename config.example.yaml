@@ -9,7 +9,9 @@ domains:
   自托管 / 效率应用: [self-hosted, knowledge management, note taking, kanban, dashboard]
 
 rotation: true            # 每天按日期取模只跑一个板块;false = 跑全部(回退)
-themes:                   # 板块 → 视觉主题(scope/editorial/console/terminal/homelab)
+themes:                   # 板块 → 视觉皮肤(共用同一套报头排版,取色自知名产品站):
+                          #   editorial=Claude暖纸 / console=OpenAI绿 / scope=Gemini蓝紫
+                          #   / terminal=Linear靛 / homelab=Supabase翠
   自动化与工作流: scope
   内容创作与分发: editorial
   AI/大模型应用与框架: console

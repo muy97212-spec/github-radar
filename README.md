@@ -29,17 +29,27 @@ export GITHUB_TOKEN="$(gh auth token)"
 **首次运行**没有历史快照,增速为"年龄均速"估算(报告顶部会标注「首跑 · 增速为估算」);
 之后每跑一次都会存一份 `snapshot.json`,下次即按两次之间的**真实涨幅**计算增速。
 
-## 网页版报告
+## 网页版报告 + 总览仪表盘
 
-除了 Markdown,每次运行还会在**同一目录**生成两份 HTML(编辑部「晨报」风:衬线大报头 + 朱红点睛;
-标题字体走 Google Fonts,离线自动降级为系统字体):
+每个板块除 Markdown 外,还在**同一子文件夹**生成 HTML:`<日期>.html`(归档)与
+`_latest.html`(固定名、永远最新一期,适合存浏览器书签)。5 个板块共用同一套「晨报」
+大报头排版,只换**配色 / 字体 / 底纹**——皮肤取色自几个设计出彩的产品站:
 
-- `<日期>.html` —— 当天归档。
-- `_latest.html` —— 固定文件名,永远是最新一天。**在浏览器里给它存一个书签**,以后每天点开就是今天的报告。
+| 主题键 | 取色自 | 风格 |
+|--------|--------|------|
+| `editorial` | Claude | 暖象牙白 + 黏土红(衬线大报头) |
+| `console` | OpenAI | 干净米白 + 信号绿 |
+| `scope` | Gemini | 冷白 + 蓝→紫 |
+| `terminal` | Linear | 近黑 + 长春花靛 |
+| `homelab` | Supabase | 深炭 + 翡翠绿 |
 
-Markdown 仍是主入口(Obsidian 自动收录、可搜索、按时间线归档);网页版是"好看视图",
-就在同一文件夹,Obsidian 里也能点开(默认调用系统浏览器)。HTML 由 `ghradar/report.py`
-的 `render_html()` 在本地生成,行内容服务端烘焙、不含第三方脚本、外部文本全部转义。
+vault 根目录另有一张 **`_仪表盘.html`(指挥中心)**:居中对称、雷达报头、5 天轮值环,
+每个板块一张卡片(用该板块的主题色),**点卡片名即跳进对应板块的 `_latest.html`**。
+把这张仪表盘存成书签,就是你每天的入口。
+
+HTML 由 `ghradar/report.py` / `ghradar/overview.py` 在本地生成:行内容服务端烘焙、
+不含第三方脚本、外部文本全部转义、`prefers-reduced-motion` 有降级。标题字体走 Google
+Fonts,离线自动降级为系统字体。Markdown 仍是 Obsidian 内的主入口(可搜索、按时间线归档)。
 
 ## 板块轮换(5 天周期)
 
@@ -57,9 +67,8 @@ GitHub雷达/
 ```
 
 增速在轮换下仍准确:快照按「每仓库各自上次见到日期」计算(某板块 5 天轮一次→得
-5 天平均日增速)。各板块主题由 `themes:` 配置(scope / editorial / console /
-terminal / homelab),共用同一套结构、只换 CSS 皮肤。设 `rotation: false` 可回退为
-每天跑全部板块、写到主文件夹根。
+5 天平均日增速)。各板块的视觉皮肤见上面「网页版报告」一节(由 `themes:` 配置)。
+设 `rotation: false` 可回退为每天跑全部板块、写到主文件夹根。
 
 ## 三个榜怎么来的
 
@@ -77,8 +86,11 @@ terminal / homelab),共用同一套结构、只换 CSS 皮肤。设 `rotation: f
 | `pool_min_stars` | 候选池低门槛(默认 50,放低以让黑马进池) |
 | `fetch_cap_per_keyword` | 每个关键词最多取多少(默认 300) |
 | `top_k` | 每个榜显示几条(默认 15) |
-| `burst_min_delta` | 爆发榜入榜的最小真实涨幅(默认 20) |
+| `burst_min_velocity` | 爆发榜入榜的最小**日增速**(星/天,默认 20) |
 | `weights` | 综合榜的 `stock` / `velocity` 权重 |
+| `rotation` | `true`(默认)每天轮一个板块;`false` 每天跑全部 |
+| `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab) |
+| `dashboard_palette` | 仪表盘 chrome 配色:`slate` / `midnight` / `phosphor` |
 | `vault_path` / `report_folder` | 报告输出目录(vault 不存在时降级到项目内 `reports/`) |
 
 GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。

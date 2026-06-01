@@ -210,8 +210,8 @@ h1.word .mid{color:var(--signal)}
 @media(max-width:620px){.cycle{overflow-x:auto}.track{min-width:480px}.grid{grid-template-columns:1fr}}
 """
 
-_SKIN_CN = {"editorial": "晨报", "scope": "示波", "console": "推理台",
-            "terminal": "终端", "homelab": "面板"}
+_SKIN_CN = {"editorial": "Claude", "scope": "Gemini", "console": "OpenAI",
+            "terminal": "Linear", "homelab": "Supabase"}
 _CYCLE_THEMES = ["editorial", "scope", "console", "terminal", "homelab"]
 
 
