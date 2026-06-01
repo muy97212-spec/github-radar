@@ -157,59 +157,58 @@ _THEMES = {
                 '--mono:"IBM Plex Mono",ui-monospace,monospace;'
                 "--texture:radial-gradient(rgba(120,90,40,.035) 1px,transparent 1px);--texture-size:3px 3px}",
     },
-    "scope": {
-        "kicker": "雷达简报 · Radar Dispatch",
-        "accent": "#c2f24e",
-        "fonts": _fonts("family=Chakra+Petch:wght@400;500;600;700"
-                        "&family=IBM+Plex+Mono:wght@400;500;600"),
+    "scope": {  # 取色自 Google Gemini:冷白底 + 蓝→紫
+        "kicker": "自动化简报 · FLUX DISPATCH",
+        "accent": "#4d6bf5",
+        "fonts": _fonts("family=Plus+Jakarta+Sans:wght@400;500;700;800"
+                        "&family=IBM+Plex+Mono:wght@400;500"),
         "root": ":root{"
-                "--paper:#070b10;--ink:#d7e2ec;--ink-soft:#9fb2c2;--muted:#6c7f91;"
-                "--rule:#1b2733;--rule-dark:#33485c;--red:#c2f24e;--red-deep:#a6d62f;"
-                '--display:"Chakra Petch","PingFang SC",sans-serif;'
-                '--body:"IBM Plex Mono","PingFang SC",ui-monospace,monospace;'
+                "--paper:#fbfbff;--ink:#1c1d24;--ink-soft:#44464f;--muted:#84868f;"
+                "--rule:#e6e7ef;--rule-dark:#c7c9d6;--red:#4d6bf5;--red-deep:#7c4ff7;"
+                '--display:"Plus Jakarta Sans","PingFang SC",sans-serif;'
+                '--body:"Plus Jakarta Sans","PingFang SC",sans-serif;'
                 '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:repeating-linear-gradient(0deg,rgba(120,200,130,.05) 0 1px,transparent 1px 64px),"
-                "repeating-linear-gradient(90deg,rgba(120,200,130,.05) 0 1px,transparent 1px 64px);"
-                "--texture-size:auto}",
+                "--texture:radial-gradient(120% 80% at 50% -8%,rgba(77,107,245,.10),"
+                "rgba(138,92,246,.05) 42%,transparent 72%);--texture-size:auto}",
     },
-    "console": {
-        "kicker": "推理台 · Inference Console",
-        "accent": "#22d3ee",
-        "fonts": _fonts("family=Orbitron:wght@500;700;900"
-                        "&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
+    "console": {  # 取色自 OpenAI/ChatGPT:干净米白 + 信号绿
+        "kicker": "智能前线 · FRONTIER BRIEF",
+        "accent": "#10a37f",
+        "fonts": _fonts("family=Hanken+Grotesk:wght@400;500;700;800;900"
+                        "&family=IBM+Plex+Mono:wght@400;500"),
         "root": ":root{"
-                "--paper:#0a0e14;--ink:#e6edf3;--ink-soft:#9aa7b5;--muted:#5f6e7e;"
-                "--rule:#19222e;--rule-dark:#2b3a4c;--red:#22d3ee;--red-deep:#38bdf8;"
-                '--display:"Orbitron","PingFang SC",sans-serif;'
-                '--body:"IBM Plex Sans","PingFang SC",sans-serif;'
-                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(56,189,248,.05) 1px,transparent 1px);--texture-size:22px 22px}",
-    },
-    "terminal": {
-        "kicker": "终端会话 · TTY Session",
-        "accent": "#9ef01a",
-        "fonts": _fonts("family=JetBrains+Mono:wght@400;500;700;800"),
-        "root": ":root{"
-                "--paper:#0a0a0a;--ink:#d6e6d6;--ink-soft:#8aa88a;--muted:#5d6f5d;"
-                "--rule:#1f2a1f;--rule-dark:#34472f;--red:#9ef01a;--red-deep:#f2b705;"
-                '--display:"JetBrains Mono","PingFang SC",monospace;'
-                '--body:"JetBrains Mono","PingFang SC",monospace;'
-                '--mono:"JetBrains Mono",ui-monospace,monospace;'
-                "--texture:repeating-linear-gradient(0deg,rgba(158,240,26,.04) 0 1px,transparent 1px 3px);"
-                "--texture-size:auto}",
-    },
-    "homelab": {
-        "kicker": "面板 · Homelab Panel",
-        "accent": "#0d9488",
-        "fonts": _fonts("family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800"
-                        "&family=Hanken+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500"),
-        "root": ":root{"
-                "--paper:#f5f7f8;--ink:#19302e;--ink-soft:#42595a;--muted:#7b9293;"
-                "--rule:#dde7e6;--rule-dark:#b6cbc9;--red:#0d9488;--red-deep:#0f766e;"
-                '--display:"Bricolage Grotesque","PingFang SC",sans-serif;'
+                "--paper:#f7f7f5;--ink:#0d0d0d;--ink-soft:#383838;--muted:#8b8b85;"
+                "--rule:#e6e6e0;--rule-dark:#cdcdc4;--red:#10a37f;--red-deep:#0c8467;"
+                '--display:"Hanken Grotesk","PingFang SC",sans-serif;'
                 '--body:"Hanken Grotesk","PingFang SC",sans-serif;'
                 '--mono:"IBM Plex Mono",ui-monospace,monospace;'
-                "--texture:radial-gradient(rgba(13,148,136,.05) 1px,transparent 1px);--texture-size:20px 20px}",
+                "--texture:radial-gradient(rgba(16,163,127,.05) 1px,transparent 1px);--texture-size:22px 22px}",
+    },
+    "terminal": {  # 取色自 Linear:近黑 + 长春花靛
+        "kicker": "开发者前线 · FORGE BRIEF",
+        "accent": "#6e79d6",
+        "fonts": _fonts("family=Sora:wght@400;500;600;700;800"
+                        "&family=JetBrains+Mono:wght@400;500;700"),
+        "root": ":root{"
+                "--paper:#0a0a0f;--ink:#ededf2;--ink-soft:#a3a3b3;--muted:#66667a;"
+                "--rule:#1b1b27;--rule-dark:#34344a;--red:#6e79d6;--red-deep:#8a93e8;"
+                '--display:"Sora","PingFang SC",sans-serif;'
+                '--body:"Sora","PingFang SC",sans-serif;'
+                '--mono:"JetBrains Mono",ui-monospace,monospace;'
+                "--texture:radial-gradient(rgba(110,121,214,.05) 1px,transparent 1px);--texture-size:24px 24px}",
+    },
+    "homelab": {  # 取色自 Supabase:深炭底 + 翡翠绿
+        "kicker": "自托管简报 · STACK BRIEF",
+        "accent": "#3ecf8e",
+        "fonts": _fonts("family=Outfit:wght@400;500;700;800;900"
+                        "&family=IBM+Plex+Mono:wght@400;500"),
+        "root": ":root{"
+                "--paper:#0d130f;--ink:#e6efe9;--ink-soft:#9fb4a8;--muted:#5f766a;"
+                "--rule:#18241d;--rule-dark:#2c4636;--red:#3ecf8e;--red-deep:#24b277;"
+                '--display:"Outfit","PingFang SC",sans-serif;'
+                '--body:"Outfit","PingFang SC",sans-serif;'
+                '--mono:"IBM Plex Mono",ui-monospace,monospace;'
+                "--texture:radial-gradient(rgba(62,207,142,.05) 1px,transparent 1px);--texture-size:20px 20px}",
     },
 }
 

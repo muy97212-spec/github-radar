@@ -59,9 +59,10 @@ def test_dashboard_links_collected_board_to_its_report():
 
 
 def test_dashboard_uses_configured_theme_accent():
+    from ghradar.report import theme_accent
     states = {d: None for d in DOMAINS}
-    # console 主题强调色 = 电青 #22d3ee,应出现在该板块卡片/节点上色里
+    # 配置了 console 主题的板块,其强调色应出现在卡片/节点上色里(不写死具体色值)
     themes = {DOMAINS[0]: "console"}
     h = render_dashboard_html(states, DOMAINS, today=DOMAINS[0], nxt=DOMAINS[1],
                               today_str="2026-05-31", themes=themes)
-    assert "#22d3ee" in h
+    assert theme_accent("console") in h
