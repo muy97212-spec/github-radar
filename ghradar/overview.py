@@ -166,7 +166,11 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .mlab{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:12px}
 .mnm{font-family:var(--display);font-weight:600;font-size:13.5px;color:var(--ink);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .mnm a{color:var(--ink);text-decoration:none}.mnm a:hover{color:var(--accent)}
-.c-foot{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:7px}
+.c-foot{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:9px}
+.rec{display:flex;gap:8px;align-items:baseline;margin-top:7px}
+.rec .rn{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rec .rn a{color:var(--ink);text-decoration:none}.rec .rn a:hover{color:var(--accent)}
+.rec .rv{font-family:var(--mono);font-size:10px;color:var(--accent);white-space:nowrap}
 .empty{font-style:italic;color:var(--muted);font-size:12.5px;margin-top:9px}
 
 .colophon{margin-top:42px;border-top:4px solid var(--ink);padding-top:18px;font-family:var(--mono);font-size:11px;
@@ -249,12 +253,15 @@ def _mini_card(domain, st, accent, skin, is_next, delta, today_str, idx):
     if not st:
         body = badge + '<div class="empty">尚未采集</div>'
     else:
-        c = _top(st, "combined")
+        recs = "".join(
+            f'<div class="rec"><span class="rn">{_link(e)}</span>'
+            f'<span class="rv">{_esc(_vel_text(e))}</span></div>'
+            for e in (st.get("combined") or [])[:2])
         body = (
             badge
-            + '<div class="mlab">综合榜首</div>'
-            f'<div class="mnm">{_link(c)}</div>'
-            f'<div class="c-foot">{_esc(_vel_text(c))} · 池 {_esc(st.get("pool_size", "—"))}</div>'
+            + '<div class="mlab">综合榜 · 推荐前 2</div>'
+            + (recs or '<div class="empty">本期无</div>')
+            + f'<div class="c-foot">候选池 {_esc(st.get("pool_size", "—"))} · 点卡名看完整三榜 →</div>'
         )
     if st:
         name_html = (f'<a class="board-link" href="{_board_href(domain)}">'
