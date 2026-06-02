@@ -142,7 +142,7 @@ def _fonts(families):
             f'<link href="https://fonts.googleapis.com/css2?{families}&display=swap" rel="stylesheet">')
 
 
-# 五套主题:统一「暖象牙白 + 衬线」高级风,共用同一排版与字体,
+# 九套主题:统一「暖象牙白 + 衬线」高级风,共用同一排版与字体,
 # 只换强调色 + 底纹微染。kicker = 报头左上角的小标。
 _IVORY_FONTS = _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
                       "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500")
@@ -177,6 +177,14 @@ _THEMES = {
                               "#a55228", "#7d3c1a", "rgba(165,82,40,.05)"),
     "homelab":   _ivory_theme("自托管简报 · STACK BRIEF",         # 黄铜
                               "#8a7327", "#655119", "rgba(138,115,39,.05)"),
+    "atelier":   _ivory_theme("设计前线 · ATELIER BRIEF",         # 梅紫(前端/UI 设计)
+                              "#9c3f6d", "#762d51", "rgba(156,63,109,.05)"),
+    "stream":    _ivory_theme("数据前线 · STREAM BRIEF",          # 青(数据/向量)
+                              "#1f6f6a", "#14524e", "rgba(31,111,106,.05)"),
+    "cipher":    _ivory_theme("安全前线 · CIPHER BRIEF",          # 玄青(安全/隐私)
+                              "#44515f", "#2f3a45", "rgba(68,81,95,.05)"),
+    "atlas":     _ivory_theme("求知简报 · ATLAS BRIEF",           # 黛紫(学习/Awesome)
+                              "#6a4a9c", "#4f3678", "rgba(106,74,156,.05)"),
 }
 
 def theme_accent(theme):

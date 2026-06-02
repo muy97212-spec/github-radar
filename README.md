@@ -21,7 +21,7 @@ cp config.example.yaml config.yaml
 # 3) 跑(GITHUB_TOKEN 提升搜索限流额度,未认证约 10 次/分钟)
 export GITHUB_TOKEN="$(gh auth token)"
 .venv/bin/python radar.py          # 轮换模式:只跑当天那一个板块
-.venv/bin/python radar.py --all    # 预热:一次把 5 个板块全跑出来(首次想立刻看到全部板块时用)
+.venv/bin/python radar.py --all    # 预热:一次把全部板块跑出来(首次想立刻看到全部板块时用)
 ```
 
 报告输出到 `config.yaml` 里 `vault_path` / `report_folder` 指定的目录(指向你的 Obsidian vault,
@@ -33,7 +33,7 @@ export GITHUB_TOKEN="$(gh auth token)"
 ## 网页版报告 + 总览仪表盘
 
 每个板块除 Markdown 外,还在**同一子文件夹**生成 HTML:`<日期>.html`(归档)与
-`_latest.html`(固定名、永远最新一期,适合存浏览器书签)。5 个板块共用同一套「晨报」
+`_latest.html`(固定名、永远最新一期,适合存浏览器书签)。9 个板块共用同一套「晨报」
 大报头排版,统一**暖象牙白 + Fraunces 衬线**的高级风,只换**强调色 / 底纹微染**:
 
 | 主题键 | 强调色 | 对应板块(默认) |
@@ -43,9 +43,13 @@ export GITHUB_TOKEN="$(gh auth token)"
 | `scope` | 森绿 | 自动化与工作流 |
 | `terminal` | 赭石 | 开发者工具 / CLI |
 | `homelab` | 黄铜 | 自托管 / 效率应用 |
+| `atelier` | 梅紫 | 前端 / UI 设计与灵感 |
+| `stream` | 青 | 数据 / 向量检索 |
+| `cipher` | 玄青 | 安全 / 隐私 |
+| `atlas` | 黛紫 | 学习 / Awesome 资源 |
 
 vault 根目录另有一张 **`_仪表盘.html`(总览封面)**:与板块同一套暖纸编辑部排版,
-居中、易读——大报头 + 今日/下一班导语 + 五日轮值条 + 今日 hero + 其余板块对称卡片
+居中、易读——大报头 + 今日/下一班导语 + 轮值进度条 + 今日 hero + 其余板块对称卡片
 (各用本板强调色),**点卡片名即跳进对应板块的 `_latest.html`**。
 把这张仪表盘存成书签,就是你每天的入口。
 
@@ -53,10 +57,10 @@ HTML 由 `ghradar/report.py` / `ghradar/overview.py` 在本地生成:行内容�
 不含第三方脚本、外部文本全部转义、`prefers-reduced-motion` 有降级。标题字体走 Google
 Fonts,离线自动降级为系统字体。Markdown 仍是 Obsidian 内的主入口(可搜索、按时间线归档)。
 
-## 板块轮换(5 天周期)
+## 板块轮换(N 天周期 = 板块数)
 
 `rotation: true`(默认)时,每天按日期取模只跑**一个**板块(`config.yaml` 的
-`domains` 顺序即循环序号),第 6 天回到第 1 个。输出结构:
+`domains` 顺序即循环序号),跑完一圈回到第 1 个。默认 9 个板块即 9 天一圈。输出结构:
 
 ```
 GitHub雷达/
@@ -71,10 +75,10 @@ GitHub雷达/
 
 **两种看法**:① 浏览器把 `_仪表盘.html` 存书签 → 点卡片进 `<板块>/_latest.html` → 点仓库名去
 GitHub(一路可点);② Obsidian 里 `_总览.md` 用 `[[<板块>/_latest]]` 连到各板块笔记,Graph
-关系图即可互相跳转。轮换下板块内容一天补一块、5 天集齐;想立刻看全部就用 `radar.py --all`。
+关系图即可互相跳转。轮换下板块内容一天补一块、跑满一圈即集齐;想立刻看全部就用 `radar.py --all`。
 
-增速在轮换下仍准确:快照按「每仓库各自上次见到日期」计算(某板块 5 天轮一次→得
-5 天平均日增速)。各板块的视觉皮肤见上面「网页版报告」一节(由 `themes:` 配置)。
+增速在轮换下仍准确:快照按「每仓库各自上次见到日期」计算(某板块 N 天轮一次→得
+N 天平均日增速)。各板块的视觉皮肤见上面「网页版报告」一节(由 `themes:` 配置)。
 设 `rotation: false` 可回退为每天跑全部板块、写到主文件夹根。
 
 ## 三个榜怎么来的
@@ -96,7 +100,7 @@ GitHub(一路可点);② Obsidian 里 `_总览.md` 用 `[[<板块>/_latest]]` �
 | `burst_min_velocity` | 爆发榜入榜的最小**日增速**(星/天,默认 20) |
 | `weights` | 综合榜的 `stock` / `velocity` 权重 |
 | `rotation` | `true`(默认)每天轮一个板块;`false` 每天跑全部 |
-| `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab) |
+| `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab / atelier / stream / cipher / atlas) |
 | `vault_path` / `report_folder` | 报告输出目录(vault 不存在时降级到项目内 `reports/`) |
 
 GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。

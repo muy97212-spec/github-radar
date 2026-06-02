@@ -7,16 +7,28 @@ domains:
                        agentic workflow, prompt engineering]
   开发者工具 / CLI: [developer tool, CLI tool, terminal, productivity, editor plugin]
   自托管 / 效率应用: [self-hosted, knowledge management, note taking, kanban, dashboard]
+  前端 / UI 设计与灵感: [UI component, design system, tailwind, shadcn,
+                       web animation, CSS framework, icon library]
+  数据 / 向量检索: [vector database, database, data pipeline, embedding,
+                  analytics engine, ETL, DuckDB]
+  安全 / 隐私: [security tool, privacy, pentest, secrets management,
+              vulnerability scanner, self-hosted vpn]
+  学习 / Awesome 资源: [awesome list, roadmap, tutorial, cheatsheet,
+                       learning resources, system design]
 
 rotation: true            # 每天按日期取模只跑一个板块;false = 跑全部(回退)
 themes:                   # 板块 → 视觉皮肤(统一暖象牙白 + 衬线,只换强调色):
-                          #   editorial=砖红 / console=靛蓝 / scope=森绿
-                          #   / terminal=赭石 / homelab=黄铜
+                          #   editorial=砖红 / console=靛蓝 / scope=森绿 / terminal=赭石
+                          #   / homelab=黄铜 / atelier=梅紫 / stream=青 / cipher=玄青 / atlas=黛紫
   自动化与工作流: scope
   内容创作与分发: editorial
   AI/大模型应用与框架: console
   开发者工具 / CLI: terminal
   自托管 / 效率应用: homelab
+  前端 / UI 设计与灵感: atelier
+  数据 / 向量检索: stream
+  安全 / 隐私: cipher
+  学习 / Awesome 资源: atlas
 
 pool_min_stars: 50
 fetch_cap_per_keyword: 300

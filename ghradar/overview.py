@@ -1,6 +1,6 @@
 # ghradar/overview.py
 """跨全部板块的总览:_总览.md(表格) + _仪表盘.html(暖纸总览封面)。
-只有当天板块真去搜,这里读 boards_state 缓存来展示全部 5 个板块的最新态。"""
+只有当天板块真去搜,这里读 boards_state 缓存来展示全部板块(数量随 config)的最新态。"""
 import html as _html
 from datetime import datetime
 
@@ -73,7 +73,7 @@ def render_overview_md(states, domains, today, today_str):
 # ============================================================
 # 总览仪表盘 _仪表盘.html —— 暖纸「总览封面」
 # 与板块报告同一家族(暖象牙白 + Fraunces 衬线大报头),居中、易读、不走科技风。
-# 报头 → 今日/下一班导语 → 五日轮值条 → 今日 hero → 其余 4 板块对称网格 → 版尾。
+# 报头 → 今日/下一班导语 → N 日轮值条 → 今日 hero → 其余板块对称网格 → 版尾。
 # 每个板块用自己的主题强调色(theme_accent),不含 <script>,外部文本全转义,
 # prefers-reduced-motion 有降级。
 # ============================================================
@@ -117,9 +117,9 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .intro b{font-family:var(--display);font-weight:600;color:var(--ink)}
 
 /* ---- 五日轮值条 ---- */
-.cycle{margin:30px auto 0;max-width:860px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:18px 6px 22px}
+.cycle{margin:30px auto 0;max-width:960px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:18px 6px 22px}
 .cyc-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
-.track{display:grid;grid-template-columns:repeat(5,1fr);position:relative}
+.track{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);position:relative}
 .track::before{content:"";position:absolute;left:10%;right:10%;top:13px;height:1px;background:var(--rule-dark)}
 .node{display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;z-index:1;padding:0 4px}
 .node .pip{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--rule-dark);background:var(--paper);
@@ -180,13 +180,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 
 @media (prefers-reduced-motion: reduce){.card{opacity:1!important;transform:none!important;animation:none!important}}
 @media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:620px){.cycle{overflow-x:auto}.track{min-width:480px}.grid{grid-template-columns:1fr}.h-stats{grid-template-columns:1fr}}
+@media(max-width:620px){.cycle{overflow-x:auto}.track{min-width:calc(var(--cols,5)*94px)}.grid{grid-template-columns:1fr}.h-stats{grid-template-columns:1fr}}
 """
 
 # 板块 → 色板中文名(配色身份,见 report._THEMES)
 _SKIN_CN = {"editorial": "砖红", "console": "靛蓝", "scope": "森绿",
-            "terminal": "赭石", "homelab": "黄铜"}
-_CYCLE_THEMES = ["editorial", "scope", "console", "terminal", "homelab"]
+            "terminal": "赭石", "homelab": "黄铜",
+            "atelier": "梅紫", "stream": "青", "cipher": "玄青", "atlas": "黛紫"}
+_CYCLE_THEMES = ["editorial", "scope", "console", "terminal", "homelab",
+                 "atelier", "stream", "cipher", "atlas"]
 
 
 def _cycle_when(delta):
@@ -307,14 +309,14 @@ def render_dashboard_html(states, domains, today, nxt, today_str, themes=None):
         '<div class="wrap">\n'
         '<header class="masthead"><hr class="rule-thin">'
         '<div class="dateline"><span>总览 · Overview</span>'
-        f'<span>5 天轮换 · {n} 板块</span><span>快照 {_esc(today_str)}</span></div>'
+        f'<span>{n} 天轮换 · {n} 板块</span><span>快照 {_esc(today_str)}</span></div>'
         '<hr class="rule-thick">'
         '<div class="wordmark"><h1>GitHub 雷达</h1>'
-        '<div class="sub">五板块总览 · 每日轮值刊印</div></div>'
+        f'<div class="sub">全 {n} 板块总览 · 每日轮值刊印</div></div>'
         '<hr class="rule-thick"></header>\n'
         f'<div class="intro">今日轮值 <b>{_esc(today)}</b> · 下一班 <b>{_esc(nxt)}</b></div>\n'
-        '<section class="cycle"><div class="cyc-lab">五日轮值 · Rotation</div>'
-        f'<div class="track">{"".join(nodes)}</div></section>\n'
+        f'<section class="cycle"><div class="cyc-lab">{n} 日轮值 · Rotation</div>'
+        f'<div class="track" style="--cols:{n}">{"".join(nodes)}</div></section>\n'
         f'{hero}\n'
         f'<section class="grid">{"".join(minis)}</section>\n'
         '<div class="colophon">GitHub 雷达 · Search API + 本地快照 · '

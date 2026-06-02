@@ -115,3 +115,26 @@ def test_render_terminal_theme_smoke():
 
 def test_render_homelab_theme_smoke():
     _theme_smoke("homelab")
+
+
+def test_render_atelier_theme_smoke():
+    _theme_smoke("atelier")
+
+
+def test_render_stream_theme_smoke():
+    _theme_smoke("stream")
+
+
+def test_render_cipher_theme_smoke():
+    _theme_smoke("cipher")
+
+
+def test_render_atlas_theme_smoke():
+    _theme_smoke("atlas")
+
+
+def test_all_themes_have_distinct_accents():
+    """9 套主题强调色互不相同(避免新增板块撞色)。"""
+    from ghradar.report import _THEMES, theme_accent
+    accents = [theme_accent(k) for k in _THEMES]
+    assert len(accents) == len(set(accents)) == 9
