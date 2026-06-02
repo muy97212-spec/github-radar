@@ -49,6 +49,7 @@ def render_overview_md(states, domains, today, today_str):
         "---", "tags: [github雷达, 总览]", f"date: {today_str}", "---", "",
         "# GitHub 雷达 · 总览", "",
         f"> 今日板块：**{today}** · 5 天轮换 · 快照 {today_str}", "",
+        "> 🖥️ 网页总览：[打开 _仪表盘.html](_仪表盘.html)（浏览器里点卡片即进各板块完整三榜）", "",
         "| 板块 | 上次更新 | 候选池 | 综合榜首 | 榜首增速 | 爆发榜首 |",
         "|------|---------|-------|---------|---------|---------|",
     ]
@@ -58,10 +59,11 @@ def render_overview_md(states, domains, today, today_str):
         if not st:
             lines.append(f"| {d}{mark} | 尚未采集 | — | — | — | — |")
             continue
+        link = f"[[{slugify(d)}/_latest\\|{d}]]"   # → 该板块稳定笔记,Obsidian Graph 连通
         c = _top(st, "combined")
         b = _top(st, "burst")
         lines.append(
-            f"| {d}{mark} | {_rel_days(st.get('date_str'), today_str)} "
+            f"| {link}{mark} | {_rel_days(st.get('date_str'), today_str)} "
             f"| {st.get('pool_size', '—')} | {c['full_name'] if c else '—'} "
             f"| {_vel_text(c)} | {b['full_name'] if b else '—'} |"
         )

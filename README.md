@@ -20,7 +20,8 @@ cp config.example.yaml config.yaml
 
 # 3) 跑(GITHUB_TOKEN 提升搜索限流额度,未认证约 10 次/分钟)
 export GITHUB_TOKEN="$(gh auth token)"
-.venv/bin/python radar.py
+.venv/bin/python radar.py          # 轮换模式:只跑当天那一个板块
+.venv/bin/python radar.py --all    # 预热:一次把 5 个板块全跑出来(首次想立刻看到全部板块时用)
 ```
 
 报告输出到 `config.yaml` 里 `vault_path` / `report_folder` 指定的目录(指向你的 Obsidian vault,
@@ -59,13 +60,18 @@ Fonts,离线自动降级为系统字体。Markdown 仍是 Obsidian 内的主入�
 
 ```
 GitHub雷达/
-├── _总览.md          # 全部板块一览表(Obsidian 内直接看)
-├── _仪表盘.html      # 总览仪表盘(浏览器)
+├── _总览.md          # 全部板块一览表(Obsidian 内直接看;每行 [[wikilink]] 连到该板块)
+├── _仪表盘.html      # 总览仪表盘(浏览器入口,卡片点进各板块)
 └── <板块名>/         # 每板块一个子文件夹
-    ├── _latest.html  # 该板块最新一期(对应主题皮肤)
+    ├── _latest.html  # 该板块最新一期网页(对应主题皮肤)
+    ├── _latest.md    # 固定名 Markdown(供 Obsidian wikilink / Graph 连接)
     ├── <日期>.html
     └── <日期>.md
 ```
+
+**两种看法**:① 浏览器把 `_仪表盘.html` 存书签 → 点卡片进 `<板块>/_latest.html` → 点仓库名去
+GitHub(一路可点);② Obsidian 里 `_总览.md` 用 `[[<板块>/_latest]]` 连到各板块笔记,Graph
+关系图即可互相跳转。轮换下板块内容一天补一块、5 天集齐;想立刻看全部就用 `radar.py --all`。
 
 增速在轮换下仍准确:快照按「每仓库各自上次见到日期」计算(某板块 5 天轮一次→得
 5 天平均日增速)。各板块的视觉皮肤见上面「网页版报告」一节(由 `themes:` 配置)。
