@@ -82,6 +82,8 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .mover:first-child{border-left:none}
 .mover .lab{font-family:var(--display);font-style:italic;font-size:14px;color:var(--red-deep)}
 .mover .nm{font-family:var(--display);font-weight:600;font-size:17px;line-height:1.25;word-break:break-word;margin:2px 0 4px}
+.mover .nm a{color:inherit;text-decoration:none}
+.mover .nm a:hover{color:var(--red-deep);text-decoration:underline;text-underline-offset:3px;text-decoration-thickness:1px}
 .mover .num{font-family:var(--mono);font-size:30px;font-weight:500;color:var(--red);letter-spacing:-.02em;line-height:1}
 .mover .num small{font-size:13px;color:var(--muted)}
 .mover .meta{font-family:var(--mono);font-size:11px;color:var(--muted);margin-top:4px}
@@ -142,7 +144,7 @@ def _fonts(families):
             f'<link href="https://fonts.googleapis.com/css2?{families}&display=swap" rel="stylesheet">')
 
 
-# 九套主题:统一「暖象牙白 + 衬线」高级风,共用同一排版与字体,
+# 七套主题:统一「暖象牙白 + 衬线」高级风,共用同一排版与字体,
 # 只换强调色 + 底纹微染。kicker = 报头左上角的小标。
 _IVORY_FONTS = _fonts("family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900"
                       "&family=Spectral:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500")
@@ -179,10 +181,6 @@ _THEMES = {
                               "#8a7327", "#655119", "rgba(138,115,39,.05)"),
     "atelier":   _ivory_theme("设计前线 · ATELIER BRIEF",         # 梅紫(前端/UI 设计)
                               "#9c3f6d", "#762d51", "rgba(156,63,109,.05)"),
-    "stream":    _ivory_theme("数据前线 · STREAM BRIEF",          # 青(数据/向量)
-                              "#1f6f6a", "#14524e", "rgba(31,111,106,.05)"),
-    "cipher":    _ivory_theme("安全前线 · CIPHER BRIEF",          # 玄青(安全/隐私)
-                              "#44515f", "#2f3a45", "rgba(68,81,95,.05)"),
     "atlas":     _ivory_theme("求知简报 · ATLAS BRIEF",           # 黛紫(学习/Awesome)
                               "#6a4a9c", "#4f3678", "rgba(106,74,156,.05)"),
 }
@@ -271,7 +269,8 @@ def _html_movers(rankings):
         meta = f'★ {e["stars"]:,}' + (f' · {_esc(e["language"])}' if e.get("language") else "")
         items.append(
             f'<div class="mover"><div class="lab">{_esc(label)}</div>'
-            f'<div class="nm">{_esc(e["full_name"])}</div>'
+            f'<div class="nm"><a href="{_esc(e["html_url"])}" target="_blank" rel="noopener">'
+            f'{_esc(e["full_name"])}</a></div>'
             f'<div class="num">{num}</div><div class="meta">{meta}</div></div>'
         )
     return ('<div class="movers"><div class="cap">今日异动 · Top Movers</div>'

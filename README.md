@@ -33,19 +33,17 @@ export GITHUB_TOKEN="$(gh auth token)"
 ## 网页版报告 + 总览仪表盘
 
 每个板块除 Markdown 外,还在**同一子文件夹**生成 HTML:`<日期>.html`(归档)与
-`_latest.html`(固定名、永远最新一期,适合存浏览器书签)。9 个板块共用同一套「晨报」
+`_latest.html`(固定名、永远最新一期,适合存浏览器书签)。7 个板块共用同一套「晨报」
 大报头排版,统一**暖象牙白 + Fraunces 衬线**的高级风,只换**强调色 / 底纹微染**:
 
 | 主题键 | 强调色 | 对应板块(默认) |
 |--------|--------|----------------|
 | `editorial` | 砖红 | 内容创作与分发 |
-| `console` | 靛蓝 | AI/大模型应用与框架 |
+| `console` | 靛蓝 | AI/大模型 · 含数据与向量 |
 | `scope` | 森绿 | 自动化与工作流 |
 | `terminal` | 赭石 | 开发者工具 / CLI |
-| `homelab` | 黄铜 | 自托管 / 效率应用 |
+| `homelab` | 黄铜 | 自托管 · 含安全与隐私 |
 | `atelier` | 梅紫 | 前端 / UI 设计与灵感 |
-| `stream` | 青 | 数据 / 向量检索 |
-| `cipher` | 玄青 | 安全 / 隐私 |
 | `atlas` | 黛紫 | 学习 / Awesome 资源 |
 
 vault 根目录另有一张 **`_仪表盘.html`(总览封面)**:与板块同一套暖纸编辑部排版,
@@ -60,7 +58,7 @@ Fonts,离线自动降级为系统字体。Markdown 仍是 Obsidian 内的主入�
 ## 板块轮换(N 天周期 = 板块数)
 
 `rotation: true`(默认)时,每天按日期取模只跑**一个**板块(`config.yaml` 的
-`domains` 顺序即循环序号),跑完一圈回到第 1 个。默认 9 个板块即 9 天一圈。输出结构:
+`domains` 顺序即循环序号),跑完一圈回到第 1 个。默认 7 个板块即 7 天一圈。输出结构:
 
 ```
 GitHub雷达/
@@ -100,7 +98,7 @@ N 天平均日增速)。各板块的视觉皮肤见上面「网页版报告」�
 | `burst_min_velocity` | 爆发榜入榜的最小**日增速**(星/天,默认 20) |
 | `weights` | 综合榜的 `stock` / `velocity` 权重 |
 | `rotation` | `true`(默认)每天轮一个板块;`false` 每天跑全部 |
-| `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab / atelier / stream / cipher / atlas) |
+| `themes` | 板块 → 视觉皮肤键(editorial / console / scope / terminal / homelab / atelier / atlas) |
 | `vault_path` / `report_folder` | 报告输出目录(vault 不存在时降级到项目内 `reports/`) |
 
 GitHub token 从环境变量 `GITHUB_TOKEN` 读,不写进配置文件。

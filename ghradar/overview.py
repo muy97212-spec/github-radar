@@ -102,7 +102,7 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
   -webkit-font-smoothing:antialiased;
   background-image:radial-gradient(rgba(120,90,40,.035) 1px,transparent 1px);background-size:3px 3px}
 .mono{font-family:var(--mono);font-feature-settings:"tnum" 1}
-.wrap{max-width:1000px;margin:0 auto;padding:0 34px 70px;text-align:center}
+.wrap{max-width:900px;margin:0 auto;padding:0 34px 70px;text-align:center}
 
 /* ---- 报头(编辑部) ---- */
 .masthead{padding-top:42px}
@@ -113,15 +113,15 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .wordmark{padding:16px 0}
 .wordmark h1{font-family:var(--display);font-weight:900;font-size:clamp(44px,8.4vw,86px);line-height:.92;letter-spacing:-.02em;font-optical-sizing:auto}
 .wordmark .sub{font-family:var(--display);font-style:italic;font-weight:400;font-size:clamp(15px,2.4vw,20px);color:var(--ink-soft);margin-top:9px}
-.intro{font-family:var(--body);font-size:17px;color:var(--ink-soft);padding:24px 0 2px}
+.intro{font-family:var(--body);font-size:17px;color:var(--ink-soft);padding:22px 0 2px}
 .intro b{font-family:var(--display);font-weight:600;color:var(--ink)}
 
-/* ---- 五日轮值条 ---- */
-.cycle{margin:30px auto 0;max-width:960px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:18px 6px 22px}
-.cyc-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+/* ---- 轮值进度条 ---- */
+.cycle{margin:26px auto 0;max-width:960px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);padding:16px 6px 18px}
+.cyc-lab{font-family:var(--mono);font-size:10.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--muted);margin-bottom:16px}
 .track{display:grid;grid-template-columns:repeat(var(--cols,5),1fr);position:relative}
 .track::before{content:"";position:absolute;left:10%;right:10%;top:13px;height:1px;background:var(--rule-dark)}
-.node{display:flex;flex-direction:column;align-items:center;gap:9px;position:relative;z-index:1;padding:0 4px}
+.node{display:flex;flex-direction:column;align-items:center;gap:7px;position:relative;z-index:1;padding:0 4px}
 .node .pip{width:28px;height:28px;border-radius:50%;border:1.5px solid var(--rule-dark);background:var(--paper);
   display:grid;place-items:center;font-family:var(--mono);font-size:12px;font-weight:600;color:var(--muted)}
 .node.on .pip{border-color:var(--accent);background:var(--accent);color:var(--paper)}
@@ -132,63 +132,61 @@ body{background:var(--paper);color:var(--ink);font-family:var(--body);font-size:
 .node.on .when,.node.next .when{color:var(--accent)}
 
 /* ---- 今日 hero ---- */
-.hero{max-width:660px;margin:34px auto 0;text-align:left;border:1px solid var(--rule-dark);border-top:4px solid var(--accent);
-  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 7%,var(--paper)),var(--paper));padding:24px 28px 22px}
+.hero{margin:26px auto 0;text-align:left;border:1px solid var(--rule-dark);border-top:4px solid var(--accent);
+  background:linear-gradient(180deg,color-mix(in srgb,var(--accent) 7%,var(--paper)),var(--paper));padding:22px 26px 20px}
 .h-badge{font-family:var(--mono);font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--accent);display:flex;align-items:center;gap:8px}
 .h-badge .b-dot{width:7px;height:7px;border-radius:50%;background:var(--accent)}
-.h-name{font-family:var(--display);font-weight:900;font-size:clamp(24px,4vw,36px);line-height:1.06;margin:12px 0 3px}
+.h-name{font-family:var(--display);font-weight:900;font-size:clamp(24px,4vw,36px);line-height:1.06;margin:10px 0 16px}
 .h-name a{color:var(--ink);text-decoration:none}
 .h-name a:hover{color:var(--accent)}
-.h-skin{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:18px}
-.h-stats{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid color-mix(in srgb,var(--accent) 22%,var(--rule));padding-top:16px}
+.h-stats{display:grid;grid-template-columns:1fr 1fr;gap:18px;border-top:1px solid color-mix(in srgb,var(--accent) 22%,var(--rule));padding-top:15px}
+.h-stats.one{grid-template-columns:1fr}
 .stat .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
 .stat .nm{font-family:var(--display);font-weight:600;font-size:16.5px;color:var(--ink);margin-top:6px;word-break:break-word}
 .stat .nm a{color:var(--ink);text-decoration:none}.stat .nm a:hover{color:var(--accent);text-decoration:underline;text-underline-offset:2px}
 .stat .vel{font-family:var(--mono);font-size:14px;color:var(--accent);margin-top:4px}
-.h-foot{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted);margin-top:16px}
-.h-cta{display:inline-block;margin-top:16px;font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--accent);
-  text-decoration:none;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--rule));padding:7px 15px}
+.h-foot-row{display:flex;justify-content:space-between;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:15px}
+.h-foot{font-family:var(--mono);font-size:11px;letter-spacing:.04em;color:var(--muted)}
+.h-cta{font-family:var(--mono);font-size:11px;letter-spacing:.08em;color:var(--accent);white-space:nowrap;
+  text-decoration:none;border:1px solid color-mix(in srgb,var(--accent) 45%,var(--rule));padding:6px 14px}
 .h-cta:hover{background:color-mix(in srgb,var(--accent) 12%,transparent)}
 .board-link{color:inherit;text-decoration:none}
 .board-link .arr{font-size:.74em;opacity:.5}
 .board-link:hover{color:var(--accent)}.board-link:hover .arr{opacity:1}
 
-/* ---- 其余 4 板块(对称网格) ---- */
-.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:16px auto 0;text-align:left}
-.card{border:1px solid var(--rule);border-top:3px solid var(--accent);background:var(--paper);padding:15px 15px 14px;
+/* ---- 其余板块(对称网格) ---- */
+.grid{display:grid;grid-template-columns:repeat(var(--gcols,3),1fr);gap:14px;margin:14px auto 0;text-align:left}
+.card{min-width:0;border:1px solid var(--rule);border-top:3px solid var(--accent);background:var(--paper);padding:14px 15px 13px;
   opacity:0;transform:translateY(8px);animation:rise .5s ease forwards}
 @keyframes rise{to{opacity:1;transform:none}}
 .card:hover{border-color:var(--rule-dark)}
+.card.next{border-top-width:4px}
+.c-head{display:flex;justify-content:space-between;align-items:baseline;gap:8px;margin-bottom:2px}
 .c-name{font-family:var(--display);font-weight:700;font-size:15px;color:var(--ink);line-height:1.25}
 .c-name a{color:var(--ink);text-decoration:none}.c-name a:hover{color:var(--accent)}
-.skin{font-family:var(--mono);font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-top:4px}
-.badge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;margin-top:11px;color:var(--accent);display:flex;align-items:center;gap:6px}
-.badge.dim{color:var(--muted)}
-.badge .b-dot{width:5px;height:5px;border-radius:50%;background:currentColor}
-.mlab{font-family:var(--mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-top:12px}
-.mnm{font-family:var(--display);font-weight:600;font-size:13.5px;color:var(--ink);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.mnm a{color:var(--ink);text-decoration:none}.mnm a:hover{color:var(--accent)}
-.c-foot{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:9px}
-.rec{display:flex;gap:8px;align-items:baseline;margin-top:7px}
-.rec .rn{flex:1;min-width:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tag{font-family:var(--mono);font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);flex:none;
+  border:1px solid color-mix(in srgb,var(--accent) 40%,var(--rule));padding:2px 6px;white-space:nowrap}
+.c-foot{font-family:var(--mono);font-size:9.5px;color:var(--muted);margin-top:10px}
+.rec{display:flex;gap:9px;align-items:baseline;margin-top:8px}
+.rec .rn{flex:0 1 auto;min-width:0;font-family:var(--display);font-weight:600;font-size:13px;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .rec .rn a{color:var(--ink);text-decoration:none}.rec .rn a:hover{color:var(--accent)}
-.rec .rv{font-family:var(--mono);font-size:10px;color:var(--accent);white-space:nowrap}
+.rec .rv{flex:none;font-family:var(--mono);font-size:10px;color:var(--accent);white-space:nowrap}
 .empty{font-style:italic;color:var(--muted);font-size:12.5px;margin-top:9px}
 
 .colophon{margin-top:42px;border-top:4px solid var(--ink);padding-top:18px;font-family:var(--mono);font-size:11px;
   letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
 
 @media (prefers-reduced-motion: reduce){.card{opacity:1!important;transform:none!important;animation:none!important}}
-@media(max-width:860px){.grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:620px){.cycle{overflow-x:auto}.track{min-width:calc(var(--cols,5)*94px)}.grid{grid-template-columns:1fr}.h-stats{grid-template-columns:1fr}}
+@media(max-width:760px){.grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:520px){.cycle{overflow-x:auto}.track{min-width:calc(var(--cols,5)*94px)}.grid{grid-template-columns:1fr}.h-stats{grid-template-columns:1fr}}
 """
 
 # 板块 → 色板中文名(配色身份,见 report._THEMES)
 _SKIN_CN = {"editorial": "砖红", "console": "靛蓝", "scope": "森绿",
             "terminal": "赭石", "homelab": "黄铜",
-            "atelier": "梅紫", "stream": "青", "cipher": "玄青", "atlas": "黛紫"}
+            "atelier": "梅紫", "atlas": "黛紫"}
 _CYCLE_THEMES = ["editorial", "scope", "console", "terminal", "homelab",
-                 "atelier", "stream", "cipher", "atlas"]
+                 "atelier", "atlas"]
 
 
 def _cycle_when(delta):
@@ -221,61 +219,58 @@ def _link(e):
 
 def _hero_card(domain, st, accent, skin, today_str):
     if not st:
-        inner = '<div class="h-foot">尚未采集 · 待首次轮值</div>'
+        name_html = _esc(domain)
+        inner = '<div class="h-foot-row"><span class="h-foot">尚未采集 · 待首次轮值</span></div>'
     else:
         c, b = _top(st, "combined"), _top(st, "burst")
-        inner = (
-            '<div class="h-stats">'
-            f'<div class="stat"><div class="k">综合榜首</div><div class="nm">{_link(c)}</div>'
-            f'<div class="vel">{_esc(_vel_text(c))}</div></div>'
-            f'<div class="stat"><div class="k">爆发榜首</div><div class="nm">{_link(b)}</div></div>'
-            '</div>'
-            f'<div class="h-foot">上次 {_esc(_rel_days(st.get("date_str"), today_str))}'
-            f' · 候选池 {_esc(st.get("pool_size", "—"))}</div>'
-        )
-    if st:
+        # 综合榜首 == 爆发榜首 时合成一条「双料榜首」,不再并列两遍
+        if c and b and c.get("full_name") == b.get("full_name"):
+            stats = ('<div class="h-stats one"><div class="stat">'
+                     '<div class="k">综合 + 爆发 · 双料榜首</div>'
+                     f'<div class="nm">{_link(c)}</div>'
+                     f'<div class="vel">{_esc(_vel_text(c))}</div></div></div>')
+        else:
+            stats = (
+                '<div class="h-stats">'
+                f'<div class="stat"><div class="k">综合榜首</div><div class="nm">{_link(c)}</div>'
+                f'<div class="vel">{_esc(_vel_text(c))}</div></div>'
+                f'<div class="stat"><div class="k">爆发榜首</div><div class="nm">{_link(b)}</div>'
+                f'<div class="vel">{_esc(_vel_text(b))}</div></div>'
+                '</div>')
+        inner = (stats + '<div class="h-foot-row">'
+                 f'<span class="h-foot">候选池 {_esc(st.get("pool_size", "—"))}'
+                 f' · 更新于 {_esc(_rel_days(st.get("date_str"), today_str))}</span>'
+                 f'<a class="h-cta" href="{_board_href(domain)}">完整三榜 →</a></div>')
         name_html = (f'<a class="board-link" href="{_board_href(domain)}">'
                      f'{_esc(domain)} <span class="arr">↗</span></a>')
-        cta = f'<a class="h-cta" href="{_board_href(domain)}">打开本板完整三榜 →</a>'
-    else:
-        name_html, cta = _esc(domain), ""
     return (
         f'<section class="hero" style="--accent:{accent}">'
         '<div class="h-badge"><span class="b-dot"></span>今日刊印 · LIVE</div>'
-        f'<div class="h-name">{name_html}</div>'
-        f'<div class="h-skin">色板 · {_esc(skin)}</div>'
-        f'{inner}{cta}</section>'
+        f'<div class="h-name">{name_html}</div>{inner}</section>'
     )
 
 
 def _mini_card(domain, st, accent, skin, is_next, delta, today_str, idx):
-    if is_next:
-        badge = '<div class="badge"><span class="b-dot"></span>下一班 · 明日</div>'
-    else:
-        tail = f" · {delta} 天后" if (delta and delta > 1) else ""
-        badge = f'<div class="badge dim"><span class="b-dot"></span>待轮值{tail}</div>'
+    # 轮值时机已在上方进度条标注,卡片不再重复「待轮值 X 天后」;只给「下一班」留个小标
+    tag = '<span class="tag">明日轮值</span>' if is_next else ""
     if not st:
-        body = badge + '<div class="empty">尚未采集</div>'
+        body = '<div class="empty">尚未采集</div>'
     else:
         recs = "".join(
             f'<div class="rec"><span class="rn">{_link(e)}</span>'
             f'<span class="rv">{_esc(_vel_text(e))}</span></div>'
             for e in (st.get("combined") or [])[:2])
-        body = (
-            badge
-            + '<div class="mlab">综合榜 · 推荐前 2</div>'
-            + (recs or '<div class="empty">本期无</div>')
-            + f'<div class="c-foot">候选池 {_esc(st.get("pool_size", "—"))} · 点卡名看完整三榜 →</div>'
-        )
+        body = ((recs or '<div class="empty">本期无</div>')
+                + f'<div class="c-foot">候选池 {_esc(st.get("pool_size", "—"))} →</div>')
     if st:
         name_html = (f'<a class="board-link" href="{_board_href(domain)}">'
                      f'{_esc(domain)} <span class="arr">↗</span></a>')
     else:
         name_html = _esc(domain)
+    cls = "card next" if is_next else "card"
     return (
-        f'<div class="card" style="--accent:{accent};animation-delay:{idx * 0.05:.2f}s">'
-        f'<div class="c-name">{name_html}</div>'
-        f'<div class="skin">{_esc(skin)}</div>{body}</div>'
+        f'<div class="{cls}" style="--accent:{accent};animation-delay:{idx * 0.05:.2f}s">'
+        f'<div class="c-head"><div class="c-name">{name_html}</div>{tag}</div>{body}</div>'
     )
 
 
@@ -300,6 +295,10 @@ def render_dashboard_html(states, domains, today, nxt, today_str, themes=None):
         else:
             minis.append(_mini_card(d, states.get(d), accent, skin, is_next, delta, today_str, i))
 
+    # 网格列数随卡片数取均衡(6→3×2, 4→2×2, 8→4×2),整组填满 wrap、居中且与 hero 等宽
+    m = len(minis)
+    gcols = m if m <= 3 else (3 if m % 3 == 0 else (2 if m % 2 == 0 else 3))
+
     style = "<style>:root{" + _DASH_ROOT_VARS + "}" + _DASH_BASE_CSS + "</style>"
     return (
         '<!DOCTYPE html>\n<html lang="zh-CN">\n<head>\n<meta charset="UTF-8">\n'
@@ -318,7 +317,7 @@ def render_dashboard_html(states, domains, today, nxt, today_str, themes=None):
         f'<section class="cycle"><div class="cyc-lab">{n} 日轮值 · Rotation</div>'
         f'<div class="track" style="--cols:{n}">{"".join(nodes)}</div></section>\n'
         f'{hero}\n'
-        f'<section class="grid">{"".join(minis)}</section>\n'
+        f'<section class="grid" style="--gcols:{gcols}">{"".join(minis)}</section>\n'
         '<div class="colophon">GitHub 雷达 · Search API + 本地快照 · '
         f'每日 08:30 自动轮值刊印 · 快照 {_esc(today_str)}</div>\n'
         '</div>\n</body>\n</html>\n'
