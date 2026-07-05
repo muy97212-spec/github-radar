@@ -29,7 +29,7 @@ Development is **TDD** (every `ghradar/*.py` has a matching `tests/test_*.py`). 
 
 ## Architecture (the cross-file picture)
 
-**Pipeline** (`radar.py` orchestrates): `github_client.search_repos` (collect candidate pool per keyword) → `scoring.build_rankings` (enrich + rank) → `report.render_markdown`/`render_html` (per-board files) → `state.save_board_state` (cache) → `overview.render_*` (cross-board total view) → `snapshot.save_snapshot`.
+**Pipeline** (`radar.py` orchestrates): `github_client.search_repos` (collect candidate pool per keyword) → `scoring.build_rankings` (enrich + rank) → `report.render_markdown`/`render_html` (per-board files) → `state.save_board_state` (cache) → `snapshot.save_snapshot` (merge star history) → `overview.render_*` (cross-board total view).
 
 **Rotation is the central design.** `domains.select_domain(domains, when) = domains[when.toordinal() % len(domains)]` — stateless, date-keyed, picks ONE board per day (config order = cycle order, N boards = N-day cycle). `radar.main` branches on `--all` / `rotation` config. Because only one board runs per day, the dashboard/overview must reconstruct all boards from the **board-state cache**, not from a single run.
 
